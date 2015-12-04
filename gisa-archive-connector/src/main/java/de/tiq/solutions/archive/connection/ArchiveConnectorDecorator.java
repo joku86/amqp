@@ -9,4 +9,8 @@ public abstract class ArchiveConnectorDecorator implements ArchiveConnector {
 		this.decoratedConnection = decoratedConnection;
 	}
 
+	public void transferData(Collection<String> test) {
+
+	}
+
 }

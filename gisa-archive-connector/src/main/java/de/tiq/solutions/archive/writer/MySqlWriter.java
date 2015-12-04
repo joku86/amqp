@@ -16,7 +16,7 @@ public class MySqlWriter implements ArchiveConnector {
 
 	}
 
-	public void setup() {
+	public void setup(String... args) {
 		// TODO Auto-generated method stub
 
 	}

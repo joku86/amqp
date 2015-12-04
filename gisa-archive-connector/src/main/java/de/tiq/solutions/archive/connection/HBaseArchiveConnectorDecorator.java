@@ -1,71 +1,71 @@
 package de.tiq.solutions.archive.connection;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.concurrent.TimeoutException;
+
+import org.apache.hadoop.hbase.client.Connection;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.QueueingConsumer;
-
-import de.tiq.solutions.gisaconnect.amqp.ConnectionAmqp;
 
 public class HBaseArchiveConnectorDecorator extends ArchiveConnectorDecorator {
-	private Connection connection;
-	private Channel createdChannel;
-	private com.rabbitmq.client.Connection connection2;
 
-	public HBaseArchiveConnectorDecorator(ArchiveConnector decoratedConnection, Connection connection) {
+	private Channel amqpChannel;
+	private com.rabbitmq.client.Connection amqpConnection;
+	private org.apache.hadoop.hbase.client.Connection hbaseConnection;
+
+	public HBaseArchiveConnectorDecorator(ArchiveConnector decoratedConnection, Connection connection, com.rabbitmq.client.Connection amqpConnection) {
 		super(decoratedConnection);
-		this.connection = connection;
+		this.hbaseConnection = connection;
+		this.amqpConnection = amqpConnection;
 
 	}
 
-	private void connect(final ArchiveConnector writer) {
+	private void connect(final ArchiveConnector writer, String queueName) {
 		System.out.println("verbinde mit der Queue");
 		try {
-			ConnectionAmqp.DefaultConnectionFactory defaultConnectionFactory = new ConnectionAmqp.DefaultConnectionFactory();
-			connection2 = defaultConnectionFactory.getConnection(null);
-			createdChannel = connection2.createChannel();
-			Consumer c = new DefaultConsumer(createdChannel) {
+			amqpChannel = amqpConnection.createChannel();
+			System.out.println("New channel open. Channel contains "
+					+ amqpChannel.queueDeclarePassive(queueName).getMessageCount()
+					+ " mesasges");
+			amqpChannel.basicQos(1);
+
+			Consumer c = new DefaultConsumer(amqpChannel) {
+
 				public void handleDelivery(String consumerTag, com.rabbitmq.client.Envelope envelope,
 						com.rabbitmq.client.AMQP.BasicProperties properties, byte[] body) throws IOException {
 					System.out.println("nachricht ist angekommen");
 					writer.transferData(Arrays.asList("empfangene nachricht"));
+					System.out.println("bestätige nachricht");
 
 				}
 
 			};
-			defaultConnectionFactory.appendConsumerAndGetChannelWitchManualAck(connection2, c, "queue");
+
+			amqpChannel.basicConsume(queueName, false, c);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		org.apache.hadoop.hbase.client.Connection connection2 = (org.apache.hadoop.hbase.client.Connection) connection
-				.getConnection("E:/logs/hbase-conf/hbase-site.xml");
 
 		System.out.println("verbindung wurde aufgebaut");
 		// TODO Auto-generated method stub
 
 	}
 
-	public void transferData(Collection<String> test) {
-
-	}
-
 	public void shutDown() throws Exception {
 		System.out.println("und aus die maus");
-		createdChannel.close();
-		connection2.close();
-		connection.close();
+		amqpChannel.close();
+		amqpConnection.close();
+		// connection.close();
 
 	}
 
-	public void setup() {
-		connect(decoratedConnection);
+	public void setup(String... args) {
+
+		decoratedConnection.setup(args);
+		connect(decoratedConnection, args[0]);
 		System.out.println("decorierung abgeschlossen ");
 
 	}

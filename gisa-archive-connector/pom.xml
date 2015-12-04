@@ -18,11 +18,11 @@
 			<artifactId>hadoop-hdfs</artifactId>
 			<version>2.6.0-cdh5.4.2</version>
 		</dependency>
-		<dependency>
-			<groupId>de.tiq.solutions</groupId>
-			<artifactId>gisa-amqp-connector</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>de.tiq.solutions</groupId> -->
+<!-- 			<artifactId>gisa-amqp-connector</artifactId> -->
+<!-- 			<version>0.0.1-SNAPSHOT</version> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>com.rabbitmq</groupId>
 			<artifactId>amqp-client</artifactId>
