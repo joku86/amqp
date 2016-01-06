@@ -2,12 +2,14 @@ package de.tiq.solutions.archive.connection;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 
 public interface Connection<T> {
@@ -54,28 +56,31 @@ public interface Connection<T> {
 			if (config == null) {
 				Configuration that = new Configuration();
 				that.addResource(new Path(hbaseSitePath));
-				config = HBaseConfiguration.create(that);
+				config = HBaseConfiguration.create();
 				return config;
 			}
 			return config;
-
 		}
 
-		public org.apache.hadoop.hbase.client.Connection getConnection(String... resourcen) {
-			try {
-				createdConnection = ConnectionFactory.createConnection(getHbaseConfig(resourcen[0]));
-				return createdConnection;
+		public org.apache.hadoop.hbase.client.Connection getConnection(String... resourcen) throws IOException {
+			Configuration hbaseConfig = getHbaseConfig(resourcen[0]);
+			getConnection(hbaseConfig);
+			return createdConnection;
+		}
 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		private void getConnection(Configuration hbaseConfig) throws IOException {
+			if (createdConnection == null)
+				createdConnection = ConnectionFactory.createConnection(hbaseConfig);
+			else {
+				if (createdConnection.isClosed()) {
+					// unknown how to open
+					createdConnection = ConnectionFactory.createConnection(hbaseConfig);
+				}
 			}
-			return null;
 		}
 
 		public void close() throws IOException {
 			createdConnection.close();
-
 		}
 
 	}
