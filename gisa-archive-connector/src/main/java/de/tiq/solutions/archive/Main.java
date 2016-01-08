@@ -9,8 +9,6 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.client.HConnection;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -19,10 +17,9 @@ import org.apache.log4j.RollingFileAppender;
 
 import de.tiq.solutions.archive.connection.ArchiveConnector;
 import de.tiq.solutions.archive.connection.Connection;
-import de.tiq.solutions.archive.connection.Connection.HbaseConnection;
 import de.tiq.solutions.archive.connection.HBaseArchiveConnectorDecorator;
 import de.tiq.solutions.archive.writer.HbaseArchiveWriter;
-import de.tiq.solutions.archive.writer.HbaseArchiveWriter.QUEUETYPE;
+import de.tiq.solutions.gisaconnect.amqp.QueueConsumer.QUEUETYPE;
 
 public class Main {
 	private static final Logger logger = Logger

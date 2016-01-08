@@ -2,8 +2,6 @@ package de.tiq.solutions.archive.writer;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.hadoop.hbase.HColumnDescriptor;
@@ -11,7 +9,6 @@ import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -19,28 +16,13 @@ import org.apache.hadoop.hbase.util.Bytes;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.tiq.solutions.archive.connection.ArchiveConnector;
+import de.tiq.solutions.gisaconnect.amqp.QueueConsumer.QUEUETYPE;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel.Val;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindLOGModel;
 import de.tiq.solutions.gisaconnect.util.FromToConverter;
 
 public class HbaseArchiveWriter implements ArchiveConnector {
-	public static enum QUEUETYPE {
-		LOG("LOG"), DATA("DATA");
-		private String desc;
-
-		public String getDesc() {
-			return desc;
-		}
-
-		public void setDesc(String desc) {
-			this.desc = desc;
-		}
-
-		private QUEUETYPE(String desc) {
-			this.desc = desc;
-		}
-	}
 
 	private String tableName = "GISA_ARCHIVE";
 	private Table table;

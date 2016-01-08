@@ -46,7 +46,7 @@ public class QueueConsumer implements Consumer {
 
 		if (writer.transferData(message))
 			confirm(envelope);
-		System.out.println("bestaetige nachricht");
+
 	}
 
 	private void confirm(Envelope envelope) throws IOException {
