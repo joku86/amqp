@@ -30,7 +30,7 @@ public class Main {
 	@SuppressWarnings("unused")
 	private static enum OPTIONS {
 
-		DESTINATIONTABLE("t", "Table"), QUEUE("q", "Queue"), RECEIVER("r", "Receiver"), LOGFILE("p",
+		DESTINATIONTABLE("t", "Table"), QUEUE("q", "Queue"), HBASECONF("r", "Database"), LOGFILE("p",
 				"LogfilePath"), CONNECTION("c", "ConnectionDetails");
 
 		private final String longDesc, desc;
@@ -55,12 +55,12 @@ public class Main {
 				OPTIONS.QUEUE.getDesc(),
 				true,
 				"Queuename followed by ? and Type of the Queue(LOG or DATA).");
-		options.addOption(OPTIONS.RECEIVER.getDesc(), true,
+		options.addOption(OPTIONS.HBASECONF.getDesc(), true,
 				"Path to the configuration file for HBase e.g.:/tmp/hbase-site.xml");
 		options.addOption(OPTIONS.LOGFILE.getDesc(), false,
 				"Path where the logfile should be saved");
 		options.addOption(OPTIONS.DESTINATIONTABLE.getDesc(), true,
-				"Path where the logfile should be saved");
+				"Table where the data will be stored");
 		options.addOption(
 				OPTIONS.CONNECTION.getDesc(),
 				true,
@@ -102,7 +102,7 @@ public class Main {
 			handleLogfile(cmd);
 			queue = ((String) cmd.getParsedOptionValue(OPTIONS.QUEUE.getDesc()))
 					.split(",");
-			hbaseSiteFile = (String) cmd.getParsedOptionValue(OPTIONS.RECEIVER.getDesc());
+			hbaseSiteFile = (String) cmd.getParsedOptionValue(OPTIONS.HBASECONF.getDesc());
 			table = (String) cmd.getParsedOptionValue(OPTIONS.DESTINATIONTABLE.getDesc());
 
 		} catch (ParseException e2) {
