@@ -1,11 +1,11 @@
 package de.tiq.solutions.archive.connection;
 
-import java.util.Collection;
+import java.io.IOException;
 
 public interface ArchiveConnector {
-	void setup(String... args);
+	void setup(String... args) throws IOException;
 
-	void transferData(Collection<String> test);
+	boolean transferData(String jsonmessage);
 
 	void shutDown() throws Exception;
 

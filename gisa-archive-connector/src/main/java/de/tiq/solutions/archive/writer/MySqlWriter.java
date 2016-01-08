@@ -6,7 +6,8 @@ import de.tiq.solutions.archive.connection.ArchiveConnector;
 
 public class MySqlWriter implements ArchiveConnector {
 
-	public void transferData(Collection<String> test) {
+	public boolean transferData(String test) {
+		return false;
 		// TODO Auto-generated method stub
 
 	}

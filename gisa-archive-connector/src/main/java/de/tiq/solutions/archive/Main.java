@@ -22,6 +22,7 @@ import de.tiq.solutions.archive.connection.Connection;
 import de.tiq.solutions.archive.connection.Connection.HbaseConnection;
 import de.tiq.solutions.archive.connection.HBaseArchiveConnectorDecorator;
 import de.tiq.solutions.archive.writer.HbaseArchiveWriter;
+import de.tiq.solutions.archive.writer.HbaseArchiveWriter.QUEUETYPE;
 
 public class Main {
 	private static final Logger logger = Logger
@@ -116,7 +117,7 @@ public class Main {
 			}
 			System.exit(1);
 		}
-
+		// Inhalt eines Threads
 		org.apache.hadoop.hbase.client.Connection hbaseConnection = null;
 		try {
 			hbaseConnection = new Connection.HbaseConnection()
@@ -133,11 +134,18 @@ public class Main {
 			e1.printStackTrace();
 		}
 
-		ArchiveConnector hbaseAmqpDecorator = new HBaseArchiveConnectorDecorator(new HbaseArchiveWriter(hbaseConnection, table), amqpConnection);
+		ArchiveConnector hbaseAmqpDecorator = new HBaseArchiveConnectorDecorator(new HbaseArchiveWriter(hbaseConnection, table, QUEUETYPE.DATA),
+				amqpConnection);
 		// Beispiel
 		// ArchiveConnector mysql = new HBaseArchiveConnectorDecorator(new
 		// MySqlWriter(), null, null);
-		hbaseAmqpDecorator.setup("tiqsolutions-q-Vertrag1Anlagendaten");
+		try {
+			hbaseAmqpDecorator.setup("tiqsolutions-q-Vertrag1Anlagendaten");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 		try {
 			Thread.sleep(5000);
 			hbaseAmqpDecorator.shutDown();
@@ -145,6 +153,8 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		// ende inhalt eines Threades
 	}
 
 	private static void handleLogfile(CommandLine cmd) throws ParseException {

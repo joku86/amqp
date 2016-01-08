@@ -1,7 +1,5 @@
 package de.tiq.solutions.archive.connection;
 
-import java.util.Collection;
-
 public abstract class ArchiveConnectorDecorator implements ArchiveConnector {
 	protected ArchiveConnector decoratedConnection;
 
@@ -9,8 +7,8 @@ public abstract class ArchiveConnectorDecorator implements ArchiveConnector {
 		this.decoratedConnection = decoratedConnection;
 	}
 
-	public void transferData(Collection<String> test) {
+	public boolean transferData(String jsonmessage) {
+		return decoratedConnection.transferData(jsonmessage);
 
 	}
-
 }
