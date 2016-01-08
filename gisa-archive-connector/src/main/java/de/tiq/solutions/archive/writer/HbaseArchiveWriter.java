@@ -1,77 +1,100 @@
 package de.tiq.solutions.archive.writer;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.tiq.solutions.archive.connection.ArchiveConnector;
+import de.tiq.solutions.gisaconnect.amqp.QueueConsumer.QUEUETYPE;
+import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel;
+import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel.Val;
+import de.tiq.solutions.gisaconnect.receipt.GisaEvermindLOGModel;
+import de.tiq.solutions.gisaconnect.util.FromToConverter;
 
 public class HbaseArchiveWriter implements ArchiveConnector {
+
 	private String tableName = "GISA_ARCHIVE";
 	private Table table;
-
+	private FromToConverter converter = new FromToConverter();
+	ObjectMapper mapper = new ObjectMapper();
 	private Connection hbaseConnection;
+	private QUEUETYPE type;
 
-	public HbaseArchiveWriter(Connection hbaseConnection, String tableName) {
+	public HbaseArchiveWriter(Connection hbaseConnection, String tableName, QUEUETYPE type) {
 		this.hbaseConnection = hbaseConnection;
 		this.tableName = tableName;
+		this.type = type;
 	}
 
-	public void transferData(Collection<String> test) {
-		System.out.println("daten werden geschrieben");
+	public boolean transferData(String message) {
 		try {
+			switch (type) {
+			case DATA:
+				GisaEvermindDATAModel readValue = mapper.readValue(message, GisaEvermindDATAModel.class);
+				List<Put> puts = new ArrayList<Put>();
+				for (Val val : readValue.getVal()) {
+					Put put = new Put(Bytes.toBytes(converter.getRowKeyForData(val)));
+					put.addColumn(Bytes.toBytes("measuredvalue"), Bytes.toBytes(val.getKey().split(":")[2]), readValue.getTs().getTime(),
+							Bytes.toBytes(Double.toString(val.getValue())));
+					// wenn Bytes.toBytes(double) in hbase steht das ByteArray
+					puts.add(put);
+				}
+				table.put(puts);
+				return true;
+			case LOG:
+				GisaEvermindLOGModel log = mapper.readValue(message, GisaEvermindLOGModel.class);
+				Put put = new Put(Bytes.toBytes(converter.getRowKeyForData(log)));
+				put.addColumn(Bytes.toBytes("event"), Bytes.toBytes(log.getMessageCode()), log.getTs().getTime(),
+						Bytes.toBytes(log.getMessage()));
+				return true;
 
-			Put put = new Put(Bytes.toBytes("PVRTG000000001::Fuchshain Bauabschnitt I::Wechselrichter::STP 17000TL-10::2110144057::Wechselrichter"));
-
-			put.add(Bytes.toBytes("mean"), Bytes.toBytes("Pac"), new Date().getTime(), Bytes.toBytes("10"));
-			table.put(put);
-			table.close();
-			System.out.println("fertig geschrieben und closed");
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			}
+			return false;
+		} catch (Exception e) {
+			return false;
 		}
-		System.out.println("daten sind nun in der DB");
 
 	}
 
 	public void shutDown() {
+		try {
+			table.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
-	public void setup(String... args) {
+	public void setup(String... args) throws IOException {
 
-		// HBaseAdmin admin = new HBaseAdmin(hbaseConnection);
+		Admin admin = hbaseConnection.getAdmin();
 
-		Admin admin;
-		try {
-			admin = hbaseConnection.getAdmin();
-
-			if (!admin.tableExists(TableName.valueOf(tableName))) {
-				HTableDescriptor td = new HTableDescriptor(TableName.valueOf(tableName));
-				HColumnDescriptor family = new HColumnDescriptor("mean");
-				family.setMaxVersions(Integer.MAX_VALUE);
-				td.addFamily(family);
-				admin.createTable(td);
-				admin.flush(TableName.valueOf(tableName));
-
-			}
-			table = hbaseConnection.getTable(TableName.valueOf(tableName));
-			System.out.println("tabelle gebaut und gesetzt " + table.getName());
-		} catch (IOException e) {
+		if (!admin.tableExists(TableName.valueOf(tableName))) {
+			HTableDescriptor td = new HTableDescriptor(TableName.valueOf(tableName));
+			HColumnDescriptor family = new HColumnDescriptor("measuredvalue");
+			family.setMaxVersions(Integer.MAX_VALUE);
+			HColumnDescriptor family2 = new HColumnDescriptor("event");
+			family2.setMaxVersions(Integer.MAX_VALUE);
+			td.addFamily(family);
+			td.addFamily(family2);
+			admin.createTable(td);
+			admin.flush(TableName.valueOf(tableName));
 
 		}
+		table = hbaseConnection.getTable(TableName.valueOf(tableName));
+		System.out.println("tabelle gebaut und gesetzt " + table.getName());
 
 		System.out.println("Habse wird verbunden");
 

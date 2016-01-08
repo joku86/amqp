@@ -5,15 +5,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Consumer;
+import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.ShutdownSignalException;
 
 public class QueueConsumer implements Consumer {
-	private ArchiveConnector writer;
-	private List<String> toTransfer = new ArrayList<>();
 
-	public QueueConsumer(ArchiveConnector connector) {
+	private ArchiveConnector writer;
+	private Channel channel;
+
+	public QueueConsumer(ArchiveConnector connector, Channel amqpChannel) {
 		writer = connector;
+		channel = amqpChannel;
 	}
 
 	@Override
@@ -36,10 +40,18 @@ public class QueueConsumer implements Consumer {
 	@Override
 	public void handleDelivery(String consumerTag, com.rabbitmq.client.Envelope envelope,
 			com.rabbitmq.client.AMQP.BasicProperties properties, byte[] body) throws IOException {
-		System.out.println("nachricht ist angekommen");
-		writer.transferData(Arrays.asList("empfangene nachricht"));
+		System.out.println("nachricht ist angekommen queuconsumer");
 
-		System.out.println("bestaetige nachricht");
+		String message = new String(body, "UTF-8");
+
+		if (writer.transferData(message))
+			confirm(envelope);
+
+	}
+
+	private void confirm(Envelope envelope) throws IOException {
+		if (channel != null && channel.isOpen())
+			channel.basicAck(envelope.getDeliveryTag(), false);
 
 	}
 

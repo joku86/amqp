@@ -52,11 +52,11 @@ public interface Connection<T> {
 		private static Configuration config;
 		private org.apache.hadoop.hbase.client.Connection createdConnection;
 
-		private static Configuration getHbaseConfig(String hbaseSitePath) {
+		private Configuration getHbaseConfig(String hbaseSitePath) {
 			if (config == null) {
-				Configuration that = new Configuration();
-				that.addResource(new Path(hbaseSitePath));
 				config = HBaseConfiguration.create();
+				config.addResource(new Path(hbaseSitePath));
+
 				return config;
 			}
 			return config;

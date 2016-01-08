@@ -17,7 +17,6 @@ public class HBaseArchiveConnectorDecorator extends ArchiveConnectorDecorator {
 	public HBaseArchiveConnectorDecorator(ArchiveConnector decoratedConnection,
 			com.rabbitmq.client.Connection amqpConnection) {
 		super(decoratedConnection);
-
 		this.amqpConnection = amqpConnection;
 
 	}
@@ -26,24 +25,13 @@ public class HBaseArchiveConnectorDecorator extends ArchiveConnectorDecorator {
 		System.out.println("verbinde mit der Queue");
 		try {
 			amqpChannel = amqpConnection.createChannel();
+
 			System.out.println("New channel open. Channel contains "
 					+ amqpChannel.queueDeclarePassive(queueName).getMessageCount()
 					+ " mesasges");
 			amqpChannel.basicQos(1);
-
-			Consumer c = new DefaultConsumer(amqpChannel) {
-
-				public void handleDelivery(String consumerTag, com.rabbitmq.client.Envelope envelope,
-						com.rabbitmq.client.AMQP.BasicProperties properties, byte[] body) throws IOException {
-					System.out.println("nachricht ist angekommen");
-					writer.transferData(Arrays.asList("empfangene nachricht"));
-					System.out.println("bestaetige nachricht");
-
-				}
-
-			};
-
-			amqpChannel.basicConsume(queueName, false, c);
+			Consumer a = new QueueConsumer(writer, amqpChannel);
+			amqpChannel.basicConsume(queueName, false, a);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -63,10 +51,14 @@ public class HBaseArchiveConnectorDecorator extends ArchiveConnectorDecorator {
 	}
 
 	public void setup(String... args) {
-
-		decoratedConnection.setup(args);
-		connect(decoratedConnection, args[0]);
-		System.out.println("decorierung abgeschlossen ");
+		try {
+			decoratedConnection.setup(args);
+			connect(decoratedConnection, args[0]);
+			System.out.println("decorierung abgeschlossen ");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
