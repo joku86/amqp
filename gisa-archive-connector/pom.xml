@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>te.tiq.solutions</groupId>
 		<artifactId>gisa-service-base</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>gisa-archive-connector</artifactId>
 	<dependencies>

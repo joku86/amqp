@@ -3,6 +3,7 @@ package de.tiq.solutions.archive.writer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
@@ -57,6 +58,7 @@ public class HbaseArchiveWriter implements ArchiveConnector {
 				Put put = new Put(Bytes.toBytes(converter.getRowKeyForData(log)));
 				put.addColumn(Bytes.toBytes("event"), Bytes.toBytes(log.getMessageCode()), log.getTs().getTime(),
 						Bytes.toBytes(log.getMessage()));
+				table.put(put);
 				return true;
 
 			}
@@ -77,26 +79,32 @@ public class HbaseArchiveWriter implements ArchiveConnector {
 
 	}
 
+	private static Semaphore _sem = new Semaphore(1);
+
 	public void setup(String... args) throws IOException {
 
 		Admin admin = hbaseConnection.getAdmin();
 
-		if (!admin.tableExists(TableName.valueOf(tableName))) {
-			HTableDescriptor td = new HTableDescriptor(TableName.valueOf(tableName));
-			HColumnDescriptor family = new HColumnDescriptor("measuredvalue");
-			family.setMaxVersions(Integer.MAX_VALUE);
-			HColumnDescriptor family2 = new HColumnDescriptor("event");
-			family2.setMaxVersions(Integer.MAX_VALUE);
-			td.addFamily(family);
-			td.addFamily(family2);
-			admin.createTable(td);
-			admin.flush(TableName.valueOf(tableName));
-
+		try {
+			_sem.acquire();
+			if (!admin.tableExists(TableName.valueOf(tableName))) {
+				HTableDescriptor td = new HTableDescriptor(TableName.valueOf(tableName));
+				HColumnDescriptor family = new HColumnDescriptor("measuredvalue");
+				family.setMaxVersions(Integer.MAX_VALUE);
+				HColumnDescriptor family2 = new HColumnDescriptor("event");
+				family2.setMaxVersions(Integer.MAX_VALUE);
+				td.addFamily(family);
+				td.addFamily(family2);
+				if (!admin.tableExists(TableName.valueOf(tableName)))
+					admin.createTable(td);
+				admin.flush(TableName.valueOf(tableName));
+			}
+			_sem.release();
+			table = hbaseConnection.getTable(TableName.valueOf(tableName));
+			System.out.println("tabelle gebaut und gesetzt " + table.getName());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		table = hbaseConnection.getTable(TableName.valueOf(tableName));
-		System.out.println("tabelle gebaut und gesetzt " + table.getName());
-
-		System.out.println("Habse wird verbunden");
-
 	}
 }

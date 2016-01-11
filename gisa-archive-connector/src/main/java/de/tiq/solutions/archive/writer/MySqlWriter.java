@@ -1,7 +1,5 @@
 package de.tiq.solutions.archive.writer;
 
-import java.util.Collection;
-
 import de.tiq.solutions.archive.connection.ArchiveConnector;
 
 public class MySqlWriter implements ArchiveConnector {

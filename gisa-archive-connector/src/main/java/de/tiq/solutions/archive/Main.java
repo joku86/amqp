@@ -1,6 +1,8 @@
 package de.tiq.solutions.archive;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Set;
@@ -83,7 +85,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		logger.info("--- Archivesystem goes up ---");
-		final Set<ArchiveConnector> connectors = new HashSet<ArchiveConnector>();
+		final Set<ArchiveConnector> connectorDekorators = new HashSet<ArchiveConnector>();
 
 		CommandLineParser parser = new DefaultParser();
 		Options options = new Options();
@@ -102,18 +104,40 @@ public class Main {
 					.split(",");
 			final String hbaseSiteFile = (String) cmd.getParsedOptionValue(OPTIONS.RECEIVER.getDesc());
 			final String table = (String) cmd.getParsedOptionValue(OPTIONS.DESTINATIONTABLE.getDesc());
+			final String[] amqpServerConf = ((String) cmd.getParsedOptionValue(OPTIONS.CONNECTION.getDesc())).split(",");
+
 			for (final String queueDef : queue) {
 				new Thread(new Runnable() {
 
 					@Override
 					public void run() {
-						connectors.add(consumeQueue(hbaseSiteFile, table, queueDef));
+						connectorDekorators.add(consumeQueue(hbaseSiteFile, table, queueDef, amqpServerConf));
 
 					}
 
 				}).start();
 
 			}
+			try {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(
+						System.in));
+				String line = "";
+				System.out.println("Enter STOP to shutdown the bridge");
+				while (!(line.trim().toLowerCase().equals("stop"))) {
+					line = reader.readLine();
+				}
+
+			} catch (Exception e) {
+				logger.error("Some error happens " + e.getMessage());
+			} finally {
+				try {
+					shutDown(connectorDekorators);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
 		} catch (ParseException e2) {
 			logger.error("Unable to parse startarguments. Exception catched maybe wrong argument? " + e2);
 			HelpFormatter formatter = new HelpFormatter();
@@ -128,7 +152,14 @@ public class Main {
 
 	}
 
-	private static ArchiveConnector consumeQueue(String hbaseSiteFile, String table, String queueDef) {
+	private static void shutDown(Set<ArchiveConnector> connectors) throws Exception {
+
+		for (ArchiveConnector archiveConnector : connectors) {
+			archiveConnector.shutDown();
+		}
+	}
+
+	private static ArchiveConnector consumeQueue(String hbaseSiteFile, String table, String queueDef, String[] amqpServerConf) {
 		// Inhalt eines Threads
 
 		String[] queuePar = queueDef.split("\\?");
@@ -148,7 +179,7 @@ public class Main {
 		com.rabbitmq.client.Connection amqpConnection = null;
 		try {
 			amqpConnection = new Connection.AmqpConnection()
-					.getConnection();
+					.getConnection(amqpServerConf);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -167,13 +198,6 @@ public class Main {
 			e1.printStackTrace();
 		}
 
-		try {
-
-			hbaseAmqpDecorator.shutDown();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return hbaseAmqpDecorator;
 		// ende inhalt eines Threades
 	}

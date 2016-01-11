@@ -7,9 +7,6 @@ import java.util.concurrent.TimeoutException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 
 public interface Connection<T> {
@@ -19,25 +16,14 @@ public interface Connection<T> {
 
 		public com.rabbitmq.client.Connection getConnection(String... resourcen) throws IOException, GeneralSecurityException, TimeoutException {
 			com.rabbitmq.client.ConnectionFactory factory = new com.rabbitmq.client.ConnectionFactory();
-			factory.setHost("test.connect.gisa.de");
-			factory.setPort(5671);
-
-			factory.useSslProtocol();
-			factory.setVirtualHost("gisa");
-			factory.setUsername("tiqsolutions");
-			factory.setPassword("sae1yedu3Aid3ie");
+			factory.setHost(resourcen[0]);
+			factory.setPort(Integer.parseInt(resourcen[1]));
+			if (Boolean.parseBoolean(resourcen[2]))
+				factory.useSslProtocol();
+			factory.setVirtualHost(resourcen[3]);
+			factory.setUsername(resourcen[4]);
+			factory.setPassword(resourcen[5]);
 			com.rabbitmq.client.Connection newConnection = factory.newConnection();
-			// Properties prop = new Properties();
-			// prop.put("HOST", "test.connect.gisa.de");
-			// prop.put("PORT", "5671");
-			// prop.put("USESSL", "true");
-			// prop.put("VHOST", "gisa");
-			// prop.put("USER", "tiqsolutions");
-			// prop.put("PASS", "sae1yedu3Aid3ie");
-
-			// com.rabbitmq.client.Connection amqpConnection =
-			// defaultConnectionFactory.getConnection(prop);
-
 			return newConnection;
 		}
 
