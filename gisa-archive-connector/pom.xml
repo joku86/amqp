@@ -29,8 +29,7 @@
 		</dependency>
 		<dependency>
 			<groupId>de.tiq.solutions</groupId>
-			<artifactId>gisa-amqp-websocket-transmitter</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<artifactId>gisa-amqp-model</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

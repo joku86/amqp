@@ -1,6 +1,10 @@
 package de.tiq.solutions.archive.connection;
 
 import java.io.IOException;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeoutException;
+
+import org.apache.log4j.Logger;
 
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
@@ -9,47 +13,74 @@ import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.ShutdownSignalException;
 
-public class HBaseArchiveConnectorDecorator extends ArchiveConnectorDecorator {
+import de.tiq.solutions.archive.writer.HbaseArchiveWriter;
+import de.tiq.solutions.gisaconnect.amqp.FallbackOnError;
 
+public class HBaseArchiveConnectorDecorator extends ArchiveConnectorDecorator {
+	private static final Logger logger = Logger
+			.getRootLogger();
 	private Channel amqpChannel;
 	private com.rabbitmq.client.Connection amqpConnection;
+	private FallbackOnError fallback;
 
 	public HBaseArchiveConnectorDecorator(ArchiveConnector decoratedConnection,
-			com.rabbitmq.client.Connection amqpConnection) {
+			com.rabbitmq.client.Connection amqpConnection, FallbackOnError fallback) {
 		super(decoratedConnection);
 		this.amqpConnection = amqpConnection;
+		this.fallback = fallback;
 
 	}
 
-	private void connect(final ArchiveConnector writer, String queueName) {
-		System.out.println("verbinde mit der Queue");
+	private void connect(String queueName) throws RuntimeException {
+		logger.info("build connection to AMQP");
 		try {
 			amqpChannel = amqpConnection.createChannel();
-
-			System.out.println("New channel open. Channel contains "
-					+ amqpChannel.queueDeclarePassive(queueName).getMessageCount()
-					+ " mesasges");
+			logger.info(String.format("New channel open. Channel contains %d %s messages", amqpChannel.queueDeclarePassive(queueName)
+					.getMessageCount(), ((HbaseArchiveWriter) decoratedConnection).getType().toString()));
 			amqpChannel.basicQos(1);
 			Consumer a = new QueueingConsumer(amqpChannel) {
 
+				private Channel channel;
+
 				@Override
-				public void handleDelivery(String consumerTag, Envelope envelope, BasicProperties properties, byte[] body) throws IOException {
-					String message = new String(body, "UTF-8");
-					if (writer.transferData(message))
-						confirm(envelope);
+				public void handleDelivery(String consumerTag, Envelope envelope, BasicProperties properties, byte[] body) {
+					try {
+						String message = new String(body, "UTF-8");
+						if (transferData(message)) {
+							confirm(envelope);
+							logger.info(".");
+						} else {
+							// TODO implemnt waiting mode
+						}
+
+					} catch (IOException e) {
+						logger.error("Unable to write message to the Database " + e);
+						try {
+							shutDown();
+						} catch (Exception e1) {
+							logger.error("Clean shutdown fail " + e1);
+						}
+						fallback.notifyShutdown(null);
+					}
 				}
 
 				private void confirm(Envelope envelope) throws IOException {
-					Channel channel = getChannel();
+					channel = getChannel();
 					if (channel != null && channel.isOpen())
 						channel.basicAck(envelope.getDeliveryTag(), false);
-
 				}
 
 				@Override
 				public void handleShutdownSignal(String consumerTag, ShutdownSignalException sig) {
-					// TODO Auto-generated method stub
 					super.handleShutdownSignal(consumerTag, sig);
+					try {
+						logger.error("AMQP shutdown received. " + sig);
+						decoratedConnection.shutDown();
+						logger.info("AMQP shutdown received and interrupted the connections succesfully");
+					} catch (Exception e) {
+						logger.error("AMQP shutdown received but could not stop existing connections clean. Stop ");
+					}
+					fallback.notifyShutdown(null);
 				}
 
 			};
@@ -57,35 +88,38 @@ public class HBaseArchiveConnectorDecorator extends ArchiveConnectorDecorator {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+
 		}
 
-		System.out.println("verbindung wurde aufgebaut");
-		// TODO Auto-generated method stub
-
 	}
+
+	private static Semaphore _sem = new Semaphore(1);
 
 	public void shutDown() throws Exception {
-		System.out.println("Dekorator beendet die Queue");
-		amqpChannel.close();
-		amqpConnection.close();
-		System.out.println("Queue wurde beendet");
-		System.out.println("hbase tabelle wird beendet");
+		_sem.acquire();
+		logger.info("begin to shutdown the connections");
+
+		if (amqpChannel.isOpen())
+			amqpChannel.close();
+		if (amqpConnection.isOpen())
+			amqpConnection.close();
 		decoratedConnection.shutDown();
-		System.out.println("hbase tabelle geschlossen");
-		// connection.close();
+		logger.info("shutdown-method successful");
+		_sem.release();
 
 	}
 
-	public void setup(String... args) {
-		try {
-			decoratedConnection.setup(args);
-			connect(decoratedConnection, args[0]);
-			System.out.println("decorierung abgeschlossen ");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void setup(String... args) throws InterruptedException, IOException {
+		_sem.acquire();
+		logger.info("Decorator setup the connections");
+		decoratedConnection.setup(args);
+		connect(args[0]);
+		logger.info("Decorator finish the setup ");
+		_sem.release();
+	}
 
+	public Channel getAmqpChannel() {
+		return amqpChannel;
 	}
 
 }

@@ -1,5 +1,7 @@
 package de.tiq.solutions.archive.connection;
 
+import java.io.IOException;
+
 public abstract class ArchiveConnectorDecorator implements ArchiveConnector {
 	protected ArchiveConnector decoratedConnection;
 
@@ -7,7 +9,7 @@ public abstract class ArchiveConnectorDecorator implements ArchiveConnector {
 		this.decoratedConnection = decoratedConnection;
 	}
 
-	public boolean transferData(String jsonmessage) {
+	public boolean transferData(String jsonmessage) throws IOException {
 		return decoratedConnection.transferData(jsonmessage);
 
 	}
