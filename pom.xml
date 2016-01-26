@@ -45,4 +45,8 @@
 		</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<inceptionYear>2016</inceptionYear>
+	<organization>
+		<name>TIQ-Solutions</name>
+	</organization>
 </project>
