@@ -1,7 +1,11 @@
 package de.tiq.solutions.archive;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -19,7 +23,7 @@ import de.tiq.solutions.archive.connection.ArchiveConnector;
 import de.tiq.solutions.archive.connection.Connection;
 import de.tiq.solutions.archive.connection.HBaseArchiveConnectorDecorator;
 import de.tiq.solutions.archive.writer.HbaseArchiveWriter;
-import de.tiq.solutions.gisaconnect.amqp.QueueConsumer.QUEUETYPE;
+import de.tiq.solutions.gisaconnect.amqp.QueueConsumer;
 
 public class Main {
 	private static final Logger logger = Logger
@@ -81,15 +85,13 @@ public class Main {
 
 	public static void main(String[] args) {
 		logger.info("--- Archivesystem goes up ---");
+		final Set<ArchiveConnector> connectorDekorators = new HashSet<ArchiveConnector>();
 
 		CommandLineParser parser = new DefaultParser();
 		Options options = new Options();
 		Main.createOptions(options);
 
 		CommandLine cmd = null;
-		String hbaseSiteFile = null;
-		String[] queue = null;
-		String table = null;
 
 		try {
 			cmd = parser.parse(options, args, false);
@@ -98,10 +100,44 @@ public class Main {
 				throw new ParseException("Required Option is missing");
 			}
 			handleLogfile(cmd);
-			queue = ((String) cmd.getParsedOptionValue(OPTIONS.QUEUE.getDesc()))
+			String[] queue = ((String) cmd.getParsedOptionValue(OPTIONS.QUEUE.getDesc()))
 					.split(",");
-			hbaseSiteFile = (String) cmd.getParsedOptionValue(OPTIONS.HBASECONF.getDesc());
-			table = (String) cmd.getParsedOptionValue(OPTIONS.DESTINATIONTABLE.getDesc());
+
+			final String hbaseSiteFile = (String) cmd.getParsedOptionValue(OPTIONS.HBASECONF.getDesc());
+			final String table = (String) cmd.getParsedOptionValue(OPTIONS.DESTINATIONTABLE.getDesc());
+			final String[] amqpServerConf = ((String) cmd.getParsedOptionValue(OPTIONS.CONNECTION.getDesc())).split(",");
+
+			for (final String queueDef : queue) {
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						connectorDekorators.add(consumeQueue(hbaseSiteFile, table, queueDef, amqpServerConf));
+
+					}
+
+				}).start();
+
+			}
+			try {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(
+						System.in));
+				String line = "";
+				System.out.println("Enter STOP to shutdown the bridge");
+				while (!(line.trim().toLowerCase().equals("stop"))) {
+					line = reader.readLine();
+				}
+
+			} catch (Exception e) {
+				logger.error("Some error happens " + e.getMessage());
+			} finally {
+				try {
+					shutDown(connectorDekorators);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 
 		} catch (ParseException e2) {
 			logger.error("Unable to parse startarguments. Exception catched maybe wrong argument? " + e2);
@@ -114,7 +150,26 @@ public class Main {
 			}
 			System.exit(1);
 		}
+
+	}
+
+	private static void shutDown(Set<ArchiveConnector> connectors) throws Exception {
+
+		for (ArchiveConnector archiveConnector : connectors) {
+			archiveConnector.shutDown();
+		}
+	}
+
+	private static ArchiveConnector consumeQueue(String hbaseSiteFile, String table, String queueDef, String[] amqpServerConf) {
 		// Inhalt eines Threads
+
+		String[] queuePar = queueDef.split("\\?");
+		if (queuePar.length != 2) {
+			logger.error("Define Queue folloved by?Type e.g. ExampleQueueTitle?LOG");
+			System.exit(1);
+		}
+		QueueConsumer.QUEUETYPE type = QueueConsumer.QUEUETYPE.valueOf(queuePar[1]);
+
 		org.apache.hadoop.hbase.client.Connection hbaseConnection = null;
 		try {
 			hbaseConnection = new Connection.HbaseConnection()
@@ -125,32 +180,26 @@ public class Main {
 		com.rabbitmq.client.Connection amqpConnection = null;
 		try {
 			amqpConnection = new Connection.AmqpConnection()
-					.getConnection();
+					.getConnection(amqpServerConf);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
-		ArchiveConnector hbaseAmqpDecorator = new HBaseArchiveConnectorDecorator(new HbaseArchiveWriter(hbaseConnection, table, QUEUETYPE.DATA),
+		ArchiveConnector hbaseAmqpDecorator = new HBaseArchiveConnectorDecorator(new HbaseArchiveWriter(hbaseConnection, table,
+				type),
 				amqpConnection);
 		// Beispiel
 		// ArchiveConnector mysql = new HBaseArchiveConnectorDecorator(new
 		// MySqlWriter(), null, null);
 		try {
-			hbaseAmqpDecorator.setup("tiqsolutions-q-Vertrag1Anlagendaten");
+			hbaseAmqpDecorator.setup(queuePar[0]);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
-		try {
-			Thread.sleep(5000);
-			hbaseAmqpDecorator.shutDown();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		return hbaseAmqpDecorator;
 		// ende inhalt eines Threades
 	}
 
