@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>te.tiq.solutions</groupId>
+		<groupId>de.tiq.solutions</groupId>
 		<artifactId>gisa-service-base</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
@@ -29,7 +29,7 @@
 		</dependency>
 		<dependency>
 			<groupId>de.tiq.solutions</groupId>
-			<artifactId>gisa-amqp-model</artifactId>
+			<artifactId>gisa-base</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -72,39 +72,6 @@
 					<source>1.7</source>
 					<target>1.7</target>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>1.8</version>
-				<configuration>
-					<verbose>true</verbose>
-					<addSvnKeyWords>true</addSvnKeyWords>
-					<licenseName>tiq_license</licenseName>
-					<licenseResolver>${project.baseUri}/license</licenseResolver>
-					<descriptionTemplate>${basedir}/license/mytemplate.txt</descriptionTemplate>
-					<processStartTag>License</processStartTag> 				
-					<processEndTag>End of License</processEndTag> 				
-					<excludes>
-						<exclude>**/*.properties</exclude>
-					</excludes>
-				</configuration>
-				<executions>
-					<execution>
-					  <id>add-file-header</id>
-						<goals>
-							<goal>update-file-header</goal>
-						</goals>
-						<phase>process-sources</phase>
-					</execution>
-					<execution>
-					<id>add-project-license</id>
-						<goals>
-							<goal>update-project-license</goal>
-						</goals>
-						<phase>package</phase>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
