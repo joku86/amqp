@@ -29,7 +29,7 @@
 		</dependency>
 		<dependency>
 			<groupId>de.tiq.solutions</groupId>
-			<artifactId>gisa-base</artifactId>
+			<artifactId>gisa-amqp-connector</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -65,12 +65,30 @@
 					</archive>
 				</configuration>
 			</plugin>
-						<plugin>
+			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.3</version>
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+						<configuration>
+					<verbose>true</verbose>
+					<addSvnKeyWords>false</addSvnKeyWords>
+					<licenseName>tiq_license</licenseName>
+					<licenseResolver>${project.baseUri}/../license</licenseResolver>
+					<descriptionTemplate>${basedir}/../license/mytemplate.txt</descriptionTemplate>
+					<processStartTag>License</processStartTag>
+					<processEndTag>End of License</processEndTag>
+					<excludes>
+						<exclude>**/*.properties</exclude>
+						<exclude>**/*.xml</exclude>
+					</excludes>
+					  <packagingExcludes>${project.build.directory}/lib/*.jar</packagingExcludes>
 				</configuration>
 			</plugin>
 		</plugins>

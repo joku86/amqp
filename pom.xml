@@ -40,7 +40,7 @@
 			</dependency>
 			<dependency>
 				<groupId>de.tiq.solutions</groupId>
-				<artifactId>gisa-base</artifactId>
+				<artifactId>gisa-amqp-connector</artifactId>
 				<version>${gisa-amqp-model.version}</version>
 			</dependency>
 		</dependencies>
@@ -50,42 +50,23 @@
 		<name>TIQ-Solutions</name>
 	</organization>
 	<build>
+		<pluginManagement>
 		<plugins>
-			<plugin>
+		<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>license-maven-plugin</artifactId>
 				<version>1.8</version>
-				<configuration>
-					<verbose>true</verbose>
-					<addSvnKeyWords>true</addSvnKeyWords>
-					<licenseName>tiq_license</licenseName>
-					<licenseResolver>${project.baseUri}/license</licenseResolver>
-					<descriptionTemplate>${basedir}/license/mytemplate.txt</descriptionTemplate>
-					<processStartTag>License</processStartTag>
-					<processEndTag>End of License</processEndTag>
-					<excludes>
-						<exclude>**/*.properties</exclude>
-						<exclude>**/*.xml</exclude>
-					</excludes>
-				</configuration>
-				<inherited>false</inherited>
 				<executions>
 					<execution>
-						<id>add-file-header</id>
 						<goals>
 							<goal>update-file-header</goal>
-						</goals>
-						<phase>process-sources</phase>
-					</execution>
-					<execution>
-						<id>add-project-license</id>
-						<goals>
 							<goal>update-project-license</goal>
 						</goals>
-						<phase>package</phase>
+						<phase>process-sources</phase>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
+		</pluginManagement>
 	</build>
 </project>
