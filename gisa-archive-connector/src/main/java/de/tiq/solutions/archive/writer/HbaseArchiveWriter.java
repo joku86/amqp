@@ -1,5 +1,16 @@
 package de.tiq.solutions.archive.writer;
 
+/*
+ * License
+ * gisa-archive-connector
+ * %%
+ * Copyright (C) 2016 TIQ-Solutions
+ * %%
+ * Lizenzbestimmung bearbeite dafür die Datei header.txt
+ * EndofLicense
+ */
+
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Formatter;

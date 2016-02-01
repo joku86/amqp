@@ -1,5 +1,16 @@
 package de.tiq.solutions.archive;
 
+/*
+ * License
+ * gisa-archive-connector
+ * %%
+ * Copyright (C) 2016 TIQ-Solutions
+ * %%
+ * Lizenzbestimmung bearbeite dafür die Datei header.txt
+ * EndofLicense
+ */
+
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
