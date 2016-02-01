@@ -51,6 +51,7 @@
 	</organization>
 	<build>
 		<plugins>
+<!-- 		Dieses Plugin Braucht eine Dependency damit die Dateien als Resourcen eingebunden werden. -->
 		<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>license-maven-plugin</artifactId>
