@@ -73,24 +73,6 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-						<configuration>
-					<verbose>true</verbose>
-					<addSvnKeyWords>false</addSvnKeyWords>
-					<licenseName>tiq_license</licenseName>
-					<licenseResolver>${project.baseUri}/../license</licenseResolver>
-					<descriptionTemplate>${basedir}/../license/mytemplate.txt</descriptionTemplate>
-					<processStartTag>License</processStartTag>
-					<processEndTag>End of License</processEndTag>
-					<excludes>
-						<exclude>**/*.properties</exclude>
-						<exclude>**/*.xml</exclude>
-					</excludes>
-					  <packagingExcludes>${project.build.directory}/lib/*.jar</packagingExcludes>
-				</configuration>
-			</plugin>
-		</plugins>
+			</plugins>
 	</build>
 </project>

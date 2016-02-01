@@ -50,7 +50,6 @@
 		<name>TIQ-Solutions</name>
 	</organization>
 	<build>
-		<pluginManagement>
 		<plugins>
 		<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -65,8 +64,27 @@
 						<phase>process-sources</phase>
 					</execution>
 				</executions>
+				<configuration>
+					<verbose>false</verbose>
+					<addSvnKeyWords>false</addSvnKeyWords>
+					<licenseName>tiq_license</licenseName>
+					<licenseResolver>classpath://license</licenseResolver>
+					<processStartTag>License</processStartTag>
+					<processEndTag>End of License</processEndTag>
+					<excludes>
+						<exclude>**/*.properties</exclude>
+						<exclude>**/*.xml</exclude>
+					</excludes>
+					  <packagingExcludes>**/lib/*.jar</packagingExcludes>
+				</configuration>
+				<dependencies>
+					<dependency>
+					<groupId>de.tiq.solutions</groupId>
+					<artifactId>license</artifactId>
+					<version>0.0.1-SNAPSHOT</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
-		</pluginManagement>
 	</build>
 </project>
