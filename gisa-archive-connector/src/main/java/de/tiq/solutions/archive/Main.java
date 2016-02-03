@@ -23,7 +23,7 @@ import de.tiq.solutions.archive.connection.ArchiveConnector;
 import de.tiq.solutions.archive.connection.Connection;
 import de.tiq.solutions.archive.connection.HBaseArchiveConnectorDecorator;
 import de.tiq.solutions.archive.writer.HbaseArchiveWriter;
-import de.tiq.solutions.gisaconnect.amqp.QueueConsumer;
+import de.tiq.solutions.gisaconnect.amqp.QueueType;
 
 public class Main {
 	private static final Logger logger = Logger
@@ -168,7 +168,7 @@ public class Main {
 			logger.error("Define Queue folloved by?Type e.g. ExampleQueueTitle?LOG");
 			System.exit(1);
 		}
-		QueueConsumer.QUEUETYPE type = QueueConsumer.QUEUETYPE.valueOf(queuePar[1]);
+		QueueType type = QueueType.valueOf(queuePar[1]);
 
 		org.apache.hadoop.hbase.client.Connection hbaseConnection = null;
 		try {

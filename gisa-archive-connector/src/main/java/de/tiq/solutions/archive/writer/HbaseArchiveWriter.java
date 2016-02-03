@@ -16,12 +16,12 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import de.tiq.solution.transformation.FromToConverter;
 import de.tiq.solutions.archive.connection.ArchiveConnector;
-import de.tiq.solutions.gisaconnect.amqp.QueueConsumer.QUEUETYPE;
+import de.tiq.solutions.gisaconnect.amqp.QueueType;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel.Val;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindLOGModel;
-import de.tiq.solutions.gisaconnect.util.FromToConverter;
 
 public class HbaseArchiveWriter implements ArchiveConnector {
 
@@ -30,9 +30,9 @@ public class HbaseArchiveWriter implements ArchiveConnector {
 	private FromToConverter converter = new FromToConverter();
 	ObjectMapper mapper = new ObjectMapper();
 	private Connection hbaseConnection;
-	private QUEUETYPE type;
+	private QueueType type;
 
-	public HbaseArchiveWriter(Connection hbaseConnection, String tableName, QUEUETYPE type) {
+	public HbaseArchiveWriter(Connection hbaseConnection, String tableName, QueueType type) {
 		this.hbaseConnection = hbaseConnection;
 		this.tableName = tableName;
 		this.type = type;

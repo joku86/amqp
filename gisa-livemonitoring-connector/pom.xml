@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>de.tiq.solutions</groupId>
+		<artifactId>gisa-service-base</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>gisa-livemonitoring-connector</artifactId>
+	<description>Service to transfer messages from AMQP to LM-Server</description>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.tiq.solutions</groupId>
+			<artifactId>gisa-amqp-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.tiq.solutions</groupId>
+			<artifactId>gisa-amqp-connector</artifactId>
+		</dependency>
+	</dependencies>
+</project>
