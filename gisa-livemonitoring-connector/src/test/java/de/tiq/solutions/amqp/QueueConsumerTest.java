@@ -45,7 +45,7 @@ public class QueueConsumerTest {
 				new FallbackOnError() {
 
 					@Override
-					public void notifyShutdown(Channel channel) {
+					public void notifyShutdown(Channel channel, String mesage) {
 						QueueConsumerTest.runAMQP = false;
 					}
 				}, QueueType.DATA);

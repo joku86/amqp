@@ -73,7 +73,7 @@ public class QueueConsumer implements Consumer {
 
 					if (!waitOnWebsocketServer(sendedToServer, readValue)) {
 						logger.error("------------------ During 3 hours the LM-Server for DATA could not be arrived. Process transmitter shut down --------------------");
-						fallbackOnError.notifyShutdown(channel);
+						fallbackOnError.notifyShutdown(channel, "LM-Server not availible");
 					}
 				} catch (TransformationException e) {
 					logger.error("Error by tranfformation " + e);
@@ -89,7 +89,7 @@ public class QueueConsumer implements Consumer {
 
 					if (!waitOnWebsocketServer(readedValue)) {
 						logger.error("------------------ During 3 hours the LM-Server could not be arrived. Log transmitter shut down --------------------");
-						fallbackOnError.notifyShutdown(channel);
+						fallbackOnError.notifyShutdown(channel, "LM-Server not availible");
 					}
 				} catch (TransformationException e) {
 					logger.error("Error by transformation " + e);

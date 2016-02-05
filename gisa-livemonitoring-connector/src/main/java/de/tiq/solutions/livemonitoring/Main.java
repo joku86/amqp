@@ -1,4 +1,4 @@
-package de.tiq.solutions.gisaconnect;
+package de.tiq.solutions.livemonitoring;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,16 +23,18 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
-import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.Consumer;
+import com.rabbitmq.client.Channel;
 
+import de.tiq.solution.amqp.QueueConsumer;
 import de.tiq.solutions.gisaconnect.amqp.ConnectionAmqp;
 import de.tiq.solutions.gisaconnect.amqp.FallbackOnError;
-import de.tiq.solutions.gisaconnect.amqp.QueueConsumer;
-import de.tiq.solutions.gisaconnect.amqp.QueueConsumer.QUEUETYPE;
+import de.tiq.solutions.gisaconnect.amqp.QueueType;
+import de.tiq.solutions.gisaconnect.basics.ServiceExecuter;
 import de.tiq.solutions.gisaconnect.websocket.WebSocketFactory;
 
-public class Main {
+public class Main implements ServiceExecuter {
 	private static final Logger logger = Logger
 			.getLogger("GISA-Websocket-Bridge");
 	public static boolean connectorRun = true;
@@ -90,7 +92,7 @@ public class Main {
 		return appender;
 	}
 
-	public static void main(String[] args) {
+	public void main(String[] args) {
 		logger.info("AMQP-Websocket bridge go up");
 
 		final Connection connection;
@@ -192,45 +194,50 @@ public class Main {
 
 	private static Channel addConsumer(Connection connection, URI uri2,
 			ConnectionAmqp factory, String queueDef) {
-		Channel channel;
+
 		String[] queuePar = queueDef.split("\\?");
 		if (queuePar.length != 2) {
 			logger.error("Define Queue folloved by?Type e.g. ExampleQueueTitle?LOG");
 			System.exit(1);
 		}
-		QUEUETYPE type = QueueConsumer.QUEUETYPE.valueOf(queuePar[1]);
-		QueueConsumer consumentWithChannel = null;
+		QueueType type = QueueType.valueOf(queuePar[1].toUpperCase());
+		Consumer consumentWithChannel = null;
+
 		try {
+			Channel channel = factory.appendConsumerAndGetChannelWitchManualAck(
+					connection);
 			switch (type) {
 			case LOG:
-				consumentWithChannel = new QueueConsumer(
+
+				consumentWithChannel = new QueueConsumer(channel,
 						new WebSocketFactory.DefaultWebSocketFactory(uri2),
 						new FallbackOnError() {
+
 							@Override
-							public void notifyShutdown(Channel channel) {
+							public void notifyShutdown(com.rabbitmq.client.Channel channel, String message) {
 								logger.error("Close whole application while inside of 3 hours it was not able to connect to WS-Server ");
 								Main.closeAmqp(channel);
 							}
 
-						}, QueueConsumer.QUEUETYPE.LOG);
+						}, QueueType.LOG);
 				break;
 			case DATA:
-				consumentWithChannel = new QueueConsumer(
+				consumentWithChannel = new QueueConsumer(channel,
 						new WebSocketFactory.DefaultWebSocketFactory(uri2),
 						new FallbackOnError() {
 							@Override
-							public void notifyShutdown(Channel channel) {
+							public void notifyShutdown(Channel channel, String message) {
 								logger.error("Close whole application while inside of 3 hours it was not able to connect to WS-Server ");
 								Main.closeAmqp(channel);
 							}
-						}, QueueConsumer.QUEUETYPE.DATA);
+						}, QueueType.DATA);
 				break;
 			default:
 				break;
 			}
+			channel.basicQos(1);
+			channel.basicConsume(queueDef, false, consumentWithChannel);
 
-			channel = factory.appendConsumerAndGetChannelWitchManualAck(
-					connection, consumentWithChannel, queuePar[0]);
 			return channel;
 		} catch (Exception e) {
 			logger.error("Unable to open new channel " + e);
@@ -238,7 +245,7 @@ public class Main {
 		return null;
 	}
 
-	public static void closeAmqp(Channel channel) {
+	public static void closeAmqp(com.rabbitmq.client.Channel channel) {
 		// Connection connection = null;
 		if (channel != null)
 			try {
@@ -284,5 +291,4 @@ public class Main {
 				}
 		}
 	}
-
 }
