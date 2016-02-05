@@ -17,8 +17,10 @@ import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.ShutdownSignalException;
 
-import de.tiq.solution.transformation.FromToConverter;
+import de.tiq.solution.transformation.Context;
 import de.tiq.solution.transformation.TransformationException;
+import de.tiq.solution.transformation.transformator.AmqpDataJsonToRowkey;
+import de.tiq.solution.transformation.transformator.AmqpEventJsonToRowkey;
 import de.tiq.solutions.gisaconnect.amqp.FallbackOnError;
 import de.tiq.solutions.gisaconnect.amqp.QueueType;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel;
@@ -29,7 +31,7 @@ import de.tiq.solutions.gisaconnect.websocket.WebSocketFactory;
 
 public class QueueConsumer implements Consumer {
 
-	volatile FromToConverter conv = new FromToConverter();
+	private Context context;
 	ObjectMapper mapper = new ObjectMapper();
 	private static final Logger logger = Logger.getLogger("QueueConsumer");
 	private Channel channel;
@@ -42,18 +44,16 @@ public class QueueConsumer implements Consumer {
 
 	public QueueConsumer(Channel channel, WebSocketFactory wsfactory,
 			FallbackOnError fallbackOnError2, QueueType type) {
+		if (type == QueueType.DATA)
+			context = new Context(new AmqpDataJsonToRowkey());
+		else
+			context = new Context(new AmqpEventJsonToRowkey());
 		// this(null, wsfactory);
 		this.fallbackOnError = fallbackOnError2;
 		this.type = type;
 		this.webSocketFactory = wsfactory;
 		websocketSender = new Sender.WebsocketSender(wsfactory);
 	}
-
-	// public QueueConsumer(Channel channel, WebSocketFactory wsfactory) {
-	// this.channel = channel;
-	// this.webSocketFactory = wsfactory;
-	// websocketSender = new Sender.WebsocketSender(wsfactory);
-	// }
 
 	@Override
 	public void handleDelivery(String consumerTag, Envelope envelope,
@@ -113,7 +113,6 @@ public class QueueConsumer implements Consumer {
 	private void checkSended(int sendedToServer, GisaEvermindDATAModel readValue)
 			throws IllegalStateException, IOException, TransformationException {
 		int size = readValue.getVal().size();
-
 		if (sendedToServer != size) {
 			logger.error(sendedToServer + "/" + size
 					+ " transmitted to the Server ");
@@ -173,23 +172,11 @@ public class QueueConsumer implements Consumer {
 
 	}
 
-	// private int sendToServer(GisaEvermindJsonModel readValue) throws
-	// IOException, IllegalStateException {
-	// FromToConverter<Val> conv = new FromToConverter<Val>();
-	// int sent = 0;
-	// for (Val value : readValue.getVal()) {
-	// String apply = conv.apply(value, readValue.getTs().getTime());
-	// websocketSender.send(apply);
-	// sent++;
-	// }
-	// return sent;
-	// }
-
 	private int sendToServer(GisaEvermindDATAModel readValue, int offset)
 			throws IOException, IllegalStateException, TransformationException {
 		int sent = offset;
 		for (int i = offset; i < readValue.getVal().size(); i++) {
-			String apply = conv.apply(readValue.getVal().get(i), readValue
+			String apply = context.executeStrategy(readValue.getVal().get(i), readValue
 					.getTs().getTime());
 			if (apply != null) {
 				logger.info("versendet data: " + apply);
@@ -203,7 +190,7 @@ public class QueueConsumer implements Consumer {
 	private void sendLOGToServer(GisaEvermindLOGModel readValue)
 			throws IOException, IllegalStateException, TransformationException {
 
-		String apply = conv.apply(readValue, readValue.getTs().getTime());
+		String apply = context.executeStrategy(readValue, readValue.getTs().getTime());
 		if (apply != null) {
 			logger.info("versendet LOG: " + apply);
 			websocketSender.send(apply);

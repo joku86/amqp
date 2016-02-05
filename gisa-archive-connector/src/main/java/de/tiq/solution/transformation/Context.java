@@ -7,7 +7,7 @@ public class Context {
 		this.strategy = strategy;
 	}
 
-	public String executeStrategy(Object input, Long t) throws TransformationException {
-		return strategy.transformate(input, t);
+	public String executeStrategy(Object input) throws TransformationException {
+		return strategy.transformate(input);
 	}
 }

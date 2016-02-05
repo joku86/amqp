@@ -16,7 +16,9 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.tiq.solution.transformation.FromToConverter;
+import de.tiq.solution.transformation.Context;
+import de.tiq.solution.transformation.transformator.AmqpDataJsonToRowkey;
+import de.tiq.solution.transformation.transformator.AmqpEventJsonToRowkey;
 import de.tiq.solutions.archive.connection.ArchiveConnector;
 import de.tiq.solutions.gisaconnect.amqp.QueueType;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel;
@@ -27,7 +29,7 @@ public class HbaseArchiveWriter implements ArchiveConnector {
 
 	private String tableName = "GISA_ARCHIVE";
 	private Table table;
-	private FromToConverter converter = new FromToConverter();
+	private Context context;
 	ObjectMapper mapper = new ObjectMapper();
 	private Connection hbaseConnection;
 	private QueueType type;
@@ -36,6 +38,10 @@ public class HbaseArchiveWriter implements ArchiveConnector {
 		this.hbaseConnection = hbaseConnection;
 		this.tableName = tableName;
 		this.type = type;
+		if (type == QueueType.DATA)
+			context = new Context(new AmqpDataJsonToRowkey());
+		else
+			context = new Context(new AmqpEventJsonToRowkey());
 	}
 
 	public boolean transferData(String message) {
@@ -45,7 +51,7 @@ public class HbaseArchiveWriter implements ArchiveConnector {
 				GisaEvermindDATAModel readValue = mapper.readValue(message, GisaEvermindDATAModel.class);
 				List<Put> puts = new ArrayList<Put>();
 				for (Val val : readValue.getVal()) {
-					Put put = new Put(Bytes.toBytes(converter.getRowKeyForData(val)));
+					Put put = new Put(Bytes.toBytes(context.executeStrategy(val)));
 					put.addColumn(Bytes.toBytes("measuredvalue"), Bytes.toBytes(val.getKey().split(":")[2]), readValue.getTs().getTime(),
 							Bytes.toBytes(Double.toString(val.getValue())));
 					// wenn Bytes.toBytes(double) in hbase steht das ByteArray
@@ -55,7 +61,7 @@ public class HbaseArchiveWriter implements ArchiveConnector {
 				return true;
 			case LOG:
 				GisaEvermindLOGModel log = mapper.readValue(message, GisaEvermindLOGModel.class);
-				Put put = new Put(Bytes.toBytes(converter.getRowKeyForData(log)));
+				Put put = new Put(Bytes.toBytes(context.executeStrategy(log)));
 				put.addColumn(Bytes.toBytes("event"), Bytes.toBytes(log.getMessageCode()), log.getTs().getTime(),
 						Bytes.toBytes(log.getMessage()));
 				table.put(put);
