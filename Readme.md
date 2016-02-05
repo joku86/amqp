@@ -9,8 +9,13 @@ Implementierung von Verbindungsaufbau zum HBase oder einer Datenbank (weiter als
 	Beinhaltet die Implementierung der Methoden zur Datenübermittlung an das Datenziel.  
 	In der Implementierung sind Ausfallkriterien und Reaktionen auf diese eingeschlossen. 
 	
-### 2 Livemonitoring-Connector (entsteht)
+### 2 Livemonitoring-Connector 
 Implementierung von Verbindungsaufbau zum Websocket-Server(weiter als Datenziel genannt).  
 	Bietet eine Möglichkeit der Transformation für die Datensätze die nicht in dem  	Datenzielformat ankommen.  
 	Beinhaltet die Implementierung der Methoden zur Datenübermittlung an das Datenziel. 	
 	In der Implementierung sind Ausfallkriterien und Reaktionen auf diese eingeschlossen. 
+	
+	  
+### 3 Main-Executer  
+ Delegiert den Start an den richtigen Service 
+	
