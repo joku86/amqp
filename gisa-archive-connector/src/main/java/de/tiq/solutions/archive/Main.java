@@ -24,9 +24,8 @@ import de.tiq.solutions.archive.connection.Connection;
 import de.tiq.solutions.archive.connection.HBaseArchiveConnectorDecorator;
 import de.tiq.solutions.archive.writer.HbaseArchiveWriter;
 import de.tiq.solutions.gisaconnect.amqp.QueueType;
-import de.tiq.solutions.gisaconnect.basics.ServiceExecuter;
 
-public class Main implements ServiceExecuter {
+public class Main {
 	private static final Logger logger = Logger
 			.getLogger("GISA-archive-service");
 
@@ -84,7 +83,7 @@ public class Main implements ServiceExecuter {
 		return appender;
 	}
 
-	public void main(String[] args) {
+	public static void main(String[] args) {
 		logger.info("--- Archivesystem goes up ---");
 		final Set<ArchiveConnector> connectorDekorators = new HashSet<ArchiveConnector>();
 

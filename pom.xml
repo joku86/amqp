@@ -27,7 +27,7 @@
 	<modules>
 		<module>gisa-archive-connector</module>
 		<module>gisa-livemonitoring-connector</module>
-		<module>gisa-service-executer</module>
+		<module>gisa-service-integrationtests</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>

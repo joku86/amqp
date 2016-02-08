@@ -6,7 +6,7 @@
 		<artifactId>gisa-service-base</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>gisa-service-executer</artifactId>
+	<artifactId>gisa-service-integrationtests</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>commons-cli</groupId>

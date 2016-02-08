@@ -23,18 +23,17 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
+import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.Channel;
 
 import de.tiq.solution.amqp.QueueConsumer;
 import de.tiq.solutions.gisaconnect.amqp.ConnectionAmqp;
 import de.tiq.solutions.gisaconnect.amqp.FallbackOnError;
 import de.tiq.solutions.gisaconnect.amqp.QueueType;
-import de.tiq.solutions.gisaconnect.basics.ServiceExecuter;
 import de.tiq.solutions.gisaconnect.websocket.WebSocketFactory;
 
-public class Main implements ServiceExecuter {
+public class Main {
 	private static final Logger logger = Logger
 			.getLogger("GISA-Websocket-Bridge");
 	public static boolean connectorRun = true;
@@ -92,7 +91,7 @@ public class Main implements ServiceExecuter {
 		return appender;
 	}
 
-	public void main(String[] args) {
+	public static void main(String[] args) {
 		logger.info("AMQP-Websocket bridge go up");
 
 		final Connection connection;
