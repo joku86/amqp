@@ -59,7 +59,7 @@ public class Main {
 				"Queuename followed by ? and Type of the Queue(LOG or DATA).");
 		options.addOption(OPTIONS.HBASECONF.getDesc(), true,
 				"Path to the configuration file for HBase e.g.:/tmp/hbase-site.xml");
-		options.addOption(OPTIONS.LOGFILE.getDesc(), false,
+		options.addOption(OPTIONS.LOGFILE.getDesc(), true,
 				"Path where the logfile should be saved");
 		options.addOption(OPTIONS.DESTINATIONTABLE.getDesc(), true,
 				"Table where the data will be stored");
@@ -173,8 +173,7 @@ public class Main {
 			amqpConnection = new Connection.AmqpConnection()
 					.getConnection(amqpServerConf);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			// TODO
 		}
 
 		ArchiveConnector hbaseAmqpDecorator = new HBaseArchiveConnectorDecorator(new HbaseArchiveWriter(hbaseConnection, table,

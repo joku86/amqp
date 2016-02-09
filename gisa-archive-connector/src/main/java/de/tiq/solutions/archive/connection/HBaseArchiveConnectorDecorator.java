@@ -22,7 +22,6 @@ public class HBaseArchiveConnectorDecorator extends ArchiveConnectorDecorator {
 	}
 
 	private void connect(final ArchiveConnector writer, String queueName) {
-		System.out.println("verbinde mit der Queue");
 		try {
 			amqpChannel = amqpConnection.createChannel();
 
@@ -65,13 +64,9 @@ public class HBaseArchiveConnectorDecorator extends ArchiveConnectorDecorator {
 	}
 
 	public void shutDown() throws Exception {
-		System.out.println("Dekorator beendet die Queue");
 		amqpChannel.close();
 		amqpConnection.close();
-		System.out.println("Queue wurde beendet");
-		System.out.println("hbase tabelle wird beendet");
 		decoratedConnection.shutDown();
-		System.out.println("hbase tabelle geschlossen");
 		// connection.close();
 
 	}
@@ -80,7 +75,6 @@ public class HBaseArchiveConnectorDecorator extends ArchiveConnectorDecorator {
 		try {
 			decoratedConnection.setup(args);
 			connect(decoratedConnection, args[0]);
-			System.out.println("decorierung abgeschlossen ");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
