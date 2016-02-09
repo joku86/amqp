@@ -1,6 +1,6 @@
 Archive-Connector
 ===================
-Implementierung der persistirungsspezifischen Funktionalitäten für ein Archivierungsinstanz (HBase)
+Implementierung der persistirungsspezifischen Funktionalitäten für ein Archivierungsservice (HBase)
 
 ### Startargumente
 Pflicht:  
