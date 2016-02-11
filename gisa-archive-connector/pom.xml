@@ -11,12 +11,10 @@
 		<dependency>
 			<groupId>org.apache.hbase</groupId>
 			<artifactId>hbase-client</artifactId>
-			<version>1.0.0-cdh5.4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
-			<version>2.6.0-cdh5.4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -72,4 +70,95 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>vanilla-hadoop</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<dependencyManagement>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.hbase</groupId>
+						<artifactId>hbase-client</artifactId>
+						<version>1.1.2</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.hadoop</groupId>
+						<artifactId>hadoop-hdfs</artifactId>
+						<version>2.7.1</version>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
+		</profile>
+		<profile>
+			<id>hdp-2.3</id>
+			<repositories>
+				<repository>
+					<releases>
+						<enabled>true</enabled>
+						<updatePolicy>always</updatePolicy>
+						<checksumPolicy>warn</checksumPolicy>
+					</releases>
+					<snapshots>
+						<enabled>false</enabled>
+						<updatePolicy>never</updatePolicy>
+						<checksumPolicy>fail</checksumPolicy>
+					</snapshots>
+					<id>HDPReleases</id>
+					<name>HDP Releases</name>
+					<url>http://repo.hortonworks.com/content/repositories/releases/</url>
+					<layout>default</layout>
+				</repository>
+			</repositories> 
+  			<dependencyManagement>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.hbase</groupId>
+						<artifactId>hbase-client</artifactId>
+						<version>1.1.2.2.3.5.0-81</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.hadoop</groupId>
+						<artifactId>hadoop-hdfs</artifactId>
+						<version>2.7.1.2.3.5.0-81</version>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
+		</profile>
+		<profile>
+			<id>cloudera-5.4</id>
+			<repositories>
+				<repository>
+					<releases>
+						<enabled>true</enabled>
+						<updatePolicy>always</updatePolicy>
+						<checksumPolicy>warn</checksumPolicy>
+					</releases>
+					<snapshots>
+						<enabled>false</enabled>
+						<updatePolicy>never</updatePolicy>
+						<checksumPolicy>fail</checksumPolicy>
+					</snapshots>
+					<id>cloudera</id>
+					<url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+					<layout>default</layout>
+				</repository>
+			</repositories> 
+  			<dependencyManagement>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.hbase</groupId>
+						<artifactId>hbase-client</artifactId>
+						<version>1.0.0-cdh5.4.8</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.hadoop</groupId>
+						<artifactId>hadoop-hdfs</artifactId>
+						<version>2.6.0-cdh5.4.8</version>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
+		</profile>
+	</profiles>
 </project>
