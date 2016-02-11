@@ -50,8 +50,6 @@ public class QueueConsumer implements Consumer {
 
 	@Override
 	public void handleShutdownSignal(String consumerTag, ShutdownSignalException sig) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

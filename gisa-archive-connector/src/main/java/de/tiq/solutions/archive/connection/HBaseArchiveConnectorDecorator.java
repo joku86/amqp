@@ -24,34 +24,8 @@ public class HBaseArchiveConnectorDecorator extends ArchiveConnectorDecorator {
 	private void connect(final ArchiveConnector writer, String queueName) {
 		try {
 			amqpChannel = amqpConnection.createChannel();
-
-			System.out.println("New channel open. Channel contains "
-					+ amqpChannel.queueDeclarePassive(queueName).getMessageCount()
-					+ " mesasges");
 			amqpChannel.basicQos(1);
-			Consumer a = new QueueingConsumer(amqpChannel) {
-
-				@Override
-				public void handleDelivery(String consumerTag, Envelope envelope, BasicProperties properties, byte[] body) throws IOException {
-					String message = new String(body, "UTF-8");
-					if (writer.transferData(message))
-						confirm(envelope);
-				}
-
-				private void confirm(Envelope envelope) throws IOException {
-					Channel channel = getChannel();
-					if (channel != null && channel.isOpen())
-						channel.basicAck(envelope.getDeliveryTag(), false);
-
-				}
-
-				@Override
-				public void handleShutdownSignal(String consumerTag, ShutdownSignalException sig) {
-					// TODO Auto-generated method stub
-					super.handleShutdownSignal(consumerTag, sig);
-				}
-
-			};
+			Consumer a = new QueueConsumer(writer, amqpChannel);
 			amqpChannel.basicConsume(queueName, false, a);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

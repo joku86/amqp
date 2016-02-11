@@ -101,16 +101,18 @@ public class HbaseArchiveWriter implements ArchiveConnector {
 				family2.setMaxVersions(Integer.MAX_VALUE);
 				td.addFamily(family);
 				td.addFamily(family2);
-				if (!admin.tableExists(TableName.valueOf(tableName)))
-					admin.createTable(td);
+				admin.createTable(td);
 				admin.flush(TableName.valueOf(tableName));
 			}
 			_sem.release();
 			table = hbaseConnection.getTable(TableName.valueOf(tableName));
-			System.out.println("tabelle gebaut und gesetzt " + table.getName());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public Table getTable() {
+		return table;
 	}
 }

@@ -15,7 +15,7 @@ public interface Connection<T> {
 	public static class AmqpConnection implements Connection<com.rabbitmq.client.Connection> {
 
 		public com.rabbitmq.client.Connection getConnection(String... resourcen) throws IOException, GeneralSecurityException, TimeoutException {
-			com.rabbitmq.client.ConnectionFactory factory = new com.rabbitmq.client.ConnectionFactory();
+			com.rabbitmq.client.ConnectionFactory factory = getFactory();
 			factory.setHost(resourcen[0]);
 			factory.setPort(Integer.parseInt(resourcen[1]));
 			if (Boolean.parseBoolean(resourcen[2]))
@@ -23,12 +23,14 @@ public interface Connection<T> {
 			factory.setVirtualHost(resourcen[3]);
 			factory.setUsername(resourcen[4]);
 			factory.setPassword(resourcen[5]);
-			com.rabbitmq.client.Connection newConnection = factory.newConnection();
-			return newConnection;
+			return factory.newConnection();
+		}
+
+		public com.rabbitmq.client.ConnectionFactory getFactory() {
+			return new com.rabbitmq.client.ConnectionFactory();
 		}
 
 		public void close() throws IOException {
-			// TODO Auto-generated method stub
 
 		}
 
