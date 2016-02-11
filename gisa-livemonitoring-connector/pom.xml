@@ -29,6 +29,10 @@
 			<groupId>de.tiq.solutions</groupId>
 			<artifactId>gisa-amqp-connector</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -49,6 +53,15 @@
 					<descriptors>
 						<descriptor>src/main/assembly/assembly.xml</descriptor>
 					</descriptors>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/*Main*.*</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>

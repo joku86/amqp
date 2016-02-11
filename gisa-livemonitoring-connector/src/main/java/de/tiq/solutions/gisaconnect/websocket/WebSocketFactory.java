@@ -45,8 +45,6 @@ public interface WebSocketFactory {
 		public Session createNewSession(WebsocketSender websocketSender) throws IOException {
 			try {
 				return ClientManager.createClient().connectToServer(new DefaultWebSocketFactory.GisaEndpoint(websocketSender), webSocketURI);
-			} catch (IOException e) {
-				throw e;
 			} catch (Exception e) {
 				throw new IOException(e);
 			}

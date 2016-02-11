@@ -51,6 +51,7 @@ public class QueueConsumer implements Consumer {
 		// this(null, wsfactory);
 		this.fallbackOnError = fallbackOnError2;
 		this.type = type;
+		this.channel = channel;
 		this.webSocketFactory = wsfactory;
 		websocketSender = new Sender.WebsocketSender(wsfactory);
 	}
@@ -76,7 +77,8 @@ public class QueueConsumer implements Consumer {
 						fallbackOnError.notifyShutdown(channel, "LM-Server not availible");
 					}
 				} catch (TransformationException e) {
-					logger.error("Error by tranfformation " + e);
+					logger.error("Error by transformation " + e + "  " + message);
+					fallbackOnError.notifyShutdown(channel, "Could not transformate the Data ");
 				}
 				break;
 			case LOG:
@@ -92,7 +94,8 @@ public class QueueConsumer implements Consumer {
 						fallbackOnError.notifyShutdown(channel, "LM-Server not availible");
 					}
 				} catch (TransformationException e) {
-					logger.error("Error by transformation " + e);
+					logger.error("Error by transformation " + e + "  " + message);
+					fallbackOnError.notifyShutdown(channel, "Could not transformate the Event ");
 				}
 				break;
 
@@ -101,11 +104,8 @@ public class QueueConsumer implements Consumer {
 			}
 
 			confirm(envelope);
-		} catch (UnsupportedEncodingException e) {
-			logger.error("could not read received mesage "
-					+ e.getLocalizedMessage() + "  " + e);
 		} catch (IOException e) {
-			logger.error("Error on  " + e.getLocalizedMessage() + "  " + e);
+			logger.error("Message not understandable  " + e.getLocalizedMessage() + "  " + e);
 		}
 
 	}
@@ -179,7 +179,7 @@ public class QueueConsumer implements Consumer {
 			String apply = context.executeStrategy(readValue.getVal().get(i), readValue
 					.getTs().getTime());
 			if (apply != null) {
-				logger.info("versendet data: " + apply);
+				logger.info("versende data: " + apply);
 				websocketSender.send(apply);
 			}
 			sent++;
@@ -192,8 +192,8 @@ public class QueueConsumer implements Consumer {
 
 		String apply = context.executeStrategy(readValue, readValue.getTs().getTime());
 		if (apply != null) {
-			logger.info("versendet LOG: " + apply);
 			websocketSender.send(apply);
+			logger.info("versendet LOG: " + apply);
 		}
 	}
 
@@ -216,14 +216,10 @@ public class QueueConsumer implements Consumer {
 	@Override
 	public void handleShutdownSignal(String consumerTag,
 			ShutdownSignalException sig) {
-		System.out.println("handle handleShutdownSignal " + consumerTag
-				+ "  -::- " + sig.getLocalizedMessage());
-
 	}
 
 	@Override
 	public void handleRecoverOk(String consumerTag) {
-		System.out.println("handle handleRecoverOk " + consumerTag);
 	}
 
 	public void setChannel(Channel channel2) {
@@ -250,5 +246,17 @@ public class QueueConsumer implements Consumer {
 	public void handleCancel(String consumerTag) throws IOException {
 		// TODO Auto-generated method stub
 
+	}
+
+	public Context getContext() {
+		return context;
+	}
+
+	public void setContext(Context context) {
+		this.context = context;
+	}
+
+	public void setWebsocketSender(WebsocketSender websocketSender) {
+		this.websocketSender = websocketSender;
 	}
 }
