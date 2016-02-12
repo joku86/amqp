@@ -21,8 +21,8 @@
 		<pmd.version>3.6</pmd.version>
 		<tyrus.version>1.12</tyrus.version>
 		<findbug.version>3.0.3</findbug.version>
-		<gisa.base.amqp.connector.version>0.1.0-SNAPSHOT</gisa.base.amqp.connector.version>
-		<gisa.base.amqp.model.version>0.1.0-SNAPSHOT</gisa.base.amqp.model.version>
+		<gisa.base.amqp.connector.version>0.2.0-SNAPSHOT</gisa.base.amqp.connector.version>
+		<gisa.base.amqp.model.version>0.2.0-SNAPSHOT</gisa.base.amqp.model.version>
 	</properties>
 	<modules>
 		<module>gisa-archive-connector</module>
