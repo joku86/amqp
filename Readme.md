@@ -16,6 +16,5 @@ Implementierung von Verbindungsaufbau zum Websocket-Server(weiter als Datenziel 
 	In der Implementierung sind Ausfallkriterien und Reaktionen auf diese eingeschlossen. 
 	
 	  
-### 3 Main-Executer  
- Delegiert den Start an den richtigen Service 
-	
+---
+ Current Version: 0.2.0
