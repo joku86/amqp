@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>de.tiq.solutions</groupId>
 		<artifactId>gisa-service-base</artifactId>
-		<version>0.1.0-SNAPSHOT</version>
+		<version>0.2.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>gisa-livemonitoring-connector</artifactId>
 	<description>Service to transfer messages from AMQP to LM-Server</description>
