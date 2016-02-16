@@ -7,6 +7,20 @@
 		<format>tar.gz</format>
 		<format>zip</format>
 	</formats>
+	<files>
+		<file>
+			<source>archive.cmd</source>
+			<outputDirectory>/</outputDirectory>
+		</file>
+		<file>
+			<source>archive.sh</source>
+			<outputDirectory>/</outputDirectory>
+		</file>
+		<file>
+			<source>hbase-site.xml</source>
+			<outputDirectory>/</outputDirectory>
+		</file>
+	</files>
 	<dependencySets>
 		<dependencySet>
 			<includes>

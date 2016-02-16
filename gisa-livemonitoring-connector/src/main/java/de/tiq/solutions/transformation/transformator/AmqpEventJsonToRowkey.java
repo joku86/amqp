@@ -1,9 +1,9 @@
-package de.tiq.solution.transformation.transformator;
+package de.tiq.solutions.transformation.transformator;
 
-import de.tiq.solution.transformation.TransformationException;
-import de.tiq.solution.transformation.TransformationStrategy;
 import de.tiq.solutions.gisaconnect.basics.Definitions;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindLOGModel;
+import de.tiq.solutions.transformation.TransformationException;
+import de.tiq.solutions.transformation.TransformationStrategy;
 
 public class AmqpEventJsonToRowkey implements TransformationStrategy {
 

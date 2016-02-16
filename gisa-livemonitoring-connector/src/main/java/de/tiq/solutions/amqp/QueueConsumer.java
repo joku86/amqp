@@ -1,4 +1,4 @@
-package de.tiq.solution.amqp;
+package de.tiq.solutions.amqp;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -17,16 +17,16 @@ import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.ShutdownSignalException;
 
-import de.tiq.solution.transformation.Context;
-import de.tiq.solution.transformation.TransformationException;
-import de.tiq.solution.transformation.transformator.AmqpDataJsonToRowkey;
-import de.tiq.solution.transformation.transformator.AmqpEventJsonToRowkey;
 import de.tiq.solutions.gisaconnect.amqp.FallbackOnError;
 import de.tiq.solutions.gisaconnect.amqp.QueueType;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindLOGModel;
 import de.tiq.solutions.gisaconnect.websocket.Sender;
 import de.tiq.solutions.gisaconnect.websocket.Sender.WebsocketSender;
+import de.tiq.solutions.transformation.Context;
+import de.tiq.solutions.transformation.TransformationException;
+import de.tiq.solutions.transformation.transformator.AmqpDataJsonToRowkey;
+import de.tiq.solutions.transformation.transformator.AmqpEventJsonToRowkey;
 import de.tiq.solutions.gisaconnect.websocket.WebSocketFactory;
 
 public class QueueConsumer implements Consumer {

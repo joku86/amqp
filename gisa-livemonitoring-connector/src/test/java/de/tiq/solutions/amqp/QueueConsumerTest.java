@@ -19,7 +19,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.Envelope;
 
-import de.tiq.solution.amqp.QueueConsumer;
+import de.tiq.solutions.amqp.QueueConsumer;
 import de.tiq.solutions.gisaconnect.amqp.ConnectionAmqp;
 import de.tiq.solutions.gisaconnect.amqp.FallbackOnError;
 import de.tiq.solutions.gisaconnect.amqp.QueueType;
