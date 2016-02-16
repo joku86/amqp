@@ -1,10 +1,10 @@
-package de.tiq.solution.transformation.transformator;
+package de.tiq.solutions.transformation.transformator;
 
-import de.tiq.solution.transformation.TransformationException;
-import de.tiq.solution.transformation.TransformationStrategy;
 import de.tiq.solutions.gisaconnect.basics.Definitions;
 import de.tiq.solutions.gisaconnect.basics.Definitions.TempObject;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel.Val;
+import de.tiq.solutions.transformation.TransformationException;
+import de.tiq.solutions.transformation.TransformationStrategy;
 
 public class AmqpDataJsonToRowkey implements TransformationStrategy {
 	/**

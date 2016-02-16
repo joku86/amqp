@@ -7,6 +7,16 @@
 		<format>tar.gz</format>
 		<format>zip</format>
 	</formats>
+	<files>
+		<file>
+			<source>livemonitoring.cmd</source>
+			<outputDirectory>/</outputDirectory>
+		</file>
+		<file>
+			<source>livemonitoring.sh</source>
+			<outputDirectory>/</outputDirectory>
+		</file>
+	</files>
 	<dependencySets>
 		<dependencySet>
 			<includes>

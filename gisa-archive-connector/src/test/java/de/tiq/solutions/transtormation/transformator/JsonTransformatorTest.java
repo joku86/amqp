@@ -9,11 +9,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.tiq.solution.transformation.TransformationException;
-import de.tiq.solution.transformation.transformator.AmqpDataJsonToRowkey;
-import de.tiq.solution.transformation.transformator.AmqpEventJsonToRowkey;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel.Val;
+import de.tiq.solutions.transformation.TransformationException;
+import de.tiq.solutions.transformation.transformator.AmqpDataJsonToRowkey;
+import de.tiq.solutions.transformation.transformator.AmqpEventJsonToRowkey;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindLOGModel;
 
 public class JsonTransformatorTest {

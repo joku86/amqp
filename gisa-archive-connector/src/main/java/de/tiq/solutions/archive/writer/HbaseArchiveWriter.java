@@ -16,13 +16,13 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.tiq.solution.transformation.Context;
-import de.tiq.solution.transformation.transformator.AmqpDataJsonToRowkey;
-import de.tiq.solution.transformation.transformator.AmqpEventJsonToRowkey;
 import de.tiq.solutions.archive.connection.ArchiveConnector;
 import de.tiq.solutions.gisaconnect.amqp.QueueType;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel.Val;
+import de.tiq.solutions.transformation.Context;
+import de.tiq.solutions.transformation.transformator.AmqpDataJsonToRowkey;
+import de.tiq.solutions.transformation.transformator.AmqpEventJsonToRowkey;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindLOGModel;
 
 public class HbaseArchiveWriter implements ArchiveConnector {
