@@ -1,4 +1,4 @@
-package de.tiq.solution.transformation;
+package de.tiq.solutions.transformation;
 
 public class TransformationException extends Exception {
 

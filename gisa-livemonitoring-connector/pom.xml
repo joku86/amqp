@@ -50,7 +50,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>de.tiq.solutions.archive.Main</mainClass>
+							<mainClass>de.tiq.solutions.livemonitoring.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
