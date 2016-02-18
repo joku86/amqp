@@ -134,15 +134,14 @@
     "protocols" : [ "HTTP" ]
   } ],
   "virtualhostnodes" : [ {
-    "id" : "ac237de7-7f7e-4b48-bb6c-251be11703f7",
-    "name" : "notSecure",
+    "id" : "0081b0ab-23a7-4ccb-a046-bbf86ce14e8f",
+    "name" : "secureVH",
     "type" : "JSON",
     "desiredState" : "ACTIVE",
-    "defaultVirtualHostNode" : true,
     "virtualHostInitialConfiguration" : "{}",
     "lastUpdatedBy" : "admin",
-    "lastUpdatedTime" : 1455795632498,
-    "createdBy" : null,
-    "createdTime" : 0
+    "lastUpdatedTime" : 1455802250332,
+    "createdBy" : "admin",
+    "createdTime" : 1455802248775
   } ]
 }
