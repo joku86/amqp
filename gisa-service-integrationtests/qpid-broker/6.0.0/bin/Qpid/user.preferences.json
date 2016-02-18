@@ -1,0 +1,6 @@
+{
+  "admin" : {
+    "timeZone" : "UTC",
+    "updatePeriod" : 2
+  }
+}

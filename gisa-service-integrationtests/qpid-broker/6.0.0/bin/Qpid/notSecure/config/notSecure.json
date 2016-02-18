@@ -1,0 +1,67 @@
+{
+  "id" : "b80669d1-3fa2-483d-9c2b-50195ceb62c3",
+  "type" : "Memory",
+  "context" : { },
+  "name" : "notSecure",
+  "modelVersion" : "6.0",
+  "lastUpdatedBy" : "admin",
+  "createdBy" : "admin",
+  "lastUpdatedTime" : 1455788796036,
+  "createdTime" : 1455788796036,
+  "exchanges" : [ {
+    "id" : "6febdacc-5fe6-4436-829b-9b6624c2653e",
+    "name" : "amq.direct",
+    "type" : "direct",
+    "lastUpdatedBy" : "admin",
+    "createdBy" : "admin",
+    "lastUpdatedTime" : 1455788796036,
+    "createdTime" : 1455788796036
+  }, {
+    "id" : "1c1db4b3-5e13-420a-9c08-13425a8c0ade",
+    "name" : "amq.fanout",
+    "type" : "fanout",
+    "lastUpdatedBy" : "admin",
+    "createdBy" : "admin",
+    "lastUpdatedTime" : 1455788796036,
+    "createdTime" : 1455788796036
+  }, {
+    "id" : "10d9f899-2476-4e4a-aca7-759a8e13fd55",
+    "name" : "amq.match",
+    "type" : "headers",
+    "lastUpdatedBy" : "admin",
+    "createdBy" : "admin",
+    "lastUpdatedTime" : 1455788796036,
+    "createdTime" : 1455788796036
+  }, {
+    "id" : "d6e86be4-b957-4624-ab40-1a58289e838a",
+    "name" : "amq.topic",
+    "type" : "topic",
+    "lastUpdatedBy" : "admin",
+    "createdBy" : "admin",
+    "lastUpdatedTime" : 1455788796036,
+    "createdTime" : 1455788796036
+  } ],
+  "queues" : [ {
+    "id" : "3947482b-65ef-49c5-b044-c6829b9a3eb7",
+    "name" : "testQueue",
+    "type" : "standard",
+    "durable" : true,
+    "messageGroupSharedGroups" : false,
+    "owner" : null,
+    "lastUpdatedBy" : "admin",
+    "lastUpdatedTime" : 1455788824420,
+    "createdBy" : "admin",
+    "createdTime" : 1455788824420,
+    "bindings" : [ {
+      "exchange" : "6febdacc-5fe6-4436-829b-9b6624c2653e",
+      "id" : "9cec3585-5d47-4874-a696-4084927d5288",
+      "name" : "#",
+      "type" : "Binding",
+      "durable" : true,
+      "lastUpdatedBy" : "admin",
+      "lastUpdatedTime" : 1455788848106,
+      "createdBy" : "admin",
+      "createdTime" : 1455788848106
+    } ]
+  } ]
+}
