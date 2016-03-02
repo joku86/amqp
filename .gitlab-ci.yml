@@ -18,7 +18,7 @@ Build for vanilla Apache support:
   - tags  
 Deploy for LiveMonitoring Connector:
   script:
-  - mvn clean package -DskipTests -pl gisa-livemonitoring-connector --also-make ||
+  - mvn -B clean package -DskipTests -pl gisa-livemonitoring-connector --also-make ||
     exit 1
   - DEST=download@download.tiq.local:data/gisa/livemonitoring-connector/
   - scp gisa-livemonitoring-connector/target/*.tar.gz gisa-livemonitoring-connector/target/*.zip
@@ -29,7 +29,7 @@ Deploy for LiveMonitoring Connector:
   - master  
 Deploy with hdp-2.3 Libs:
   script:
-  - mvn clean package -DskipTests -P hdp-2.3 -pl gisa-archive-connector --also-make
+  - mvn -B clean package -DskipTests -P hdp-2.3 -pl gisa-archive-connector --also-make
     || exit 1
   - DEST=download@download.tiq.local:data/gisa/archive-connector/hdp-2.3/
   - scp gisa-archive-connector/target/*.tar.gz gisa-archive-connector/target/*.zip
@@ -38,9 +38,9 @@ Deploy with hdp-2.3 Libs:
   tags: 
   only:
   - master
- Deploy with cloudera-5.4 Libs:
+Deploy with cloudera-5.4 Libs:
   script:
-  - mvn clean package -DskipTests -P cloudera-5.4 -pl gisa-archive-connector --also-make
+  - mvn -B clean package -DskipTests -P cloudera-5.4 -pl gisa-archive-connector --also-make
     || exit 1
   - DEST=download@download.tiq.local:data/gisa/archive-connector/cloudera-5.4/
   - scp gisa-archive-connector/target/*.tar.gz gisa-archive-connector/target/*.zip
@@ -51,7 +51,7 @@ Deploy with hdp-2.3 Libs:
   - master
 Deploy with vanilla-hadoop:
   script:
-  - mvn clean package -DskipTests -P vanilla-hadoop -pl gisa-archive-connector --also-make
+  - mvn -B clean package -DskipTests -P vanilla-hadoop -pl gisa-archive-connector --also-make
     || exit 1
   - DEST=download@download.tiq.local:data/gisa/archive-connector/vanilla-hadoop/
   - scp gisa-archive-connector/target/*.tar.gz gisa-archive-connector/target/*.zip
@@ -60,4 +60,3 @@ Deploy with vanilla-hadoop:
   tags: 
   only:
   - master
-
