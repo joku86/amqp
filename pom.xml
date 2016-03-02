@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.tiq.solutions</groupId>
 	<artifactId>gisa-service-base</artifactId>
-	<version>0.1.0</version>
+	<version>0.1.4</version>
 	<packaging>pom</packaging>
 	<description>Parent for Service Projects </description>
 	<properties>
