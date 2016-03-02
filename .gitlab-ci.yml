@@ -1,0 +1,63 @@
+Build for CDH 5.4:
+  script:
+  - mvn -B clean verify -P cloudera-5.4
+  tags: 
+  except:
+  - tags
+Build for HDP-2.3:
+  script:
+  - mvn -B clean verify -P hdp-2.3
+  tags: 
+  except:
+  - tags
+Build for vanilla Apache support:
+  script:
+  - mvn -B clean verify
+  tags: 
+  except:
+  - tags  
+Deploy for LiveMonitoring Connector:
+  script:
+  - mvn clean package -DskipTests -pl gisa-livemonitoring-connector --also-make ||
+    exit 1
+  - DEST=download@download.tiq.local:data/gisa/livemonitoring-connector/
+  - scp gisa-livemonitoring-connector/target/*.tar.gz gisa-livemonitoring-connector/target/*.zip
+    $DEST
+  type: deploy
+  tags: 
+  only:
+  - master  
+Deploy with hdp-2.3 Libs:
+  script:
+  - mvn clean package -DskipTests -P hdp-2.3 -pl gisa-archive-connector --also-make
+    || exit 1
+  - DEST=download@download.tiq.local:data/gisa/archive-connector/hdp-2.3/
+  - scp gisa-archive-connector/target/*.tar.gz gisa-archive-connector/target/*.zip
+    $DEST
+  type: deploy
+  tags: 
+  only:
+  - master
+ Deploy with cloudera-5.4 Libs:
+  script:
+  - mvn clean package -DskipTests -P cloudera-5.4 -pl gisa-archive-connector --also-make
+    || exit 1
+  - DEST=download@download.tiq.local:data/gisa/archive-connector/cloudera-5.4/
+  - scp gisa-archive-connector/target/*.tar.gz gisa-archive-connector/target/*.zip
+    $DEST
+  type: deploy
+  tags: 
+  only:
+  - master
+Deploy with vanilla-hadoop:
+  script:
+  - mvn clean package -DskipTests -P vanilla-hadoop -pl gisa-archive-connector --also-make
+    || exit 1
+  - DEST=download@download.tiq.local:data/gisa/archive-connector/vanilla-hadoop/
+  - scp gisa-archive-connector/target/*.tar.gz gisa-archive-connector/target/*.zip
+    $DEST
+  type: deploy
+  tags: 
+  only:
+  - master
+
