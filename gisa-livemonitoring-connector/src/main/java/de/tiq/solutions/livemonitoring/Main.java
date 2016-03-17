@@ -69,8 +69,8 @@ public class Main {
 				"Queuename followed by ? and Type of the Queue(LOG or DATA). Queuename?Type e.g: exampleQueueName?LOG,ExampleQueue2?DATA ");
 		options.addOption(OPTIONS.RECEIVER.getDesc(), true,
 				"Websocket Adress of Receiver e.g ws://myhost.teest:8025/root/path");
-		// options.addOption(OPTIONS.LOGFILE.getDesc(), false,
-		// "Path where the logfile should be saved");
+		options.addOption(OPTIONS.LOGFILE.getDesc(), true,
+				"Path where the logfile should be saved");
 		options.addOption(
 				OPTIONS.CONNECTION.getDesc(),
 				true,
@@ -91,6 +91,8 @@ public class Main {
 		return appender;
 	}
 
+	final static Set<Channel> channels = new HashSet<Channel>();
+
 	public static void main(String[] args) {
 		logger.info("AMQP-Websocket bridge go up");
 
@@ -105,7 +107,6 @@ public class Main {
 		final URI uri2;
 		String[] queue = null;
 
-		final Set<Channel> channels = new HashSet<Channel>();
 		try {
 			cmd = parser.parse(options, args, false);
 			if (!cmd.hasOption(OPTIONS.QUEUE.getDesc())
@@ -142,6 +143,13 @@ public class Main {
 				}).start();
 
 			}
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					System.in));
+			String line = "";
+			System.out.println("Enter STOP to shutdown the bridge");
+			while (!(line.trim().toLowerCase().equals("stop"))) {
+				line = reader.readLine();
+			}
 		} catch (ParseException e) {
 			logger.error("Unable to connect to the Queue. Parser Exception catched maybe wrong argument? " + e);
 			HelpFormatter formatter = new HelpFormatter();
@@ -157,18 +165,6 @@ public class Main {
 
 		} catch (IOException | GeneralSecurityException | TimeoutException e) {
 			logger.error("Unable to connect to the Queue " + e);
-		}
-		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					System.in));
-			String line = "";
-			System.out.println("Enter STOP to shutdown the bridge");
-			while (!(line.trim().toLowerCase().equals("stop"))) {
-				line = reader.readLine();
-			}
-
-		} catch (Exception e) {
-			logger.error("Some error happens " + e.getMessage());
 		} finally {
 			closeAmqp(channels);
 		}
@@ -205,6 +201,9 @@ public class Main {
 		try {
 			Channel channel = factory.appendConsumerAndGetChannelWitchManualAck(
 					connection);
+
+			System.out.println("nachtrichten auf der queue " + channel.queueDeclarePassive(queuePar[0]).getMessageCount());
+
 			switch (type) {
 			case LOG:
 
@@ -214,7 +213,7 @@ public class Main {
 
 							@Override
 							public void notifyShutdown(com.rabbitmq.client.Channel channel, String message) {
-								logger.error("Close whole application while inside of 3 hours it was not able to connect to WS-Server ");
+
 								Main.closeAmqp(channel);
 							}
 
@@ -226,7 +225,7 @@ public class Main {
 						new FallbackOnError() {
 							@Override
 							public void notifyShutdown(Channel channel, String message) {
-								logger.error("Close whole application while inside of 3 hours it was not able to connect to WS-Server ");
+
 								Main.closeAmqp(channel);
 							}
 						}, QueueType.DATA);
@@ -234,8 +233,7 @@ public class Main {
 			default:
 				break;
 			}
-			channel.basicQos(1);
-			channel.basicConsume(queueDef, false, consumentWithChannel);
+			channel.basicConsume(queuePar[0], false, consumentWithChannel);
 
 			return channel;
 		} catch (Exception e) {
@@ -246,7 +244,7 @@ public class Main {
 
 	public static void closeAmqp(com.rabbitmq.client.Channel channel) {
 		// Connection connection = null;
-		if (channel != null)
+		if (channel != null && channel.isOpen())
 			try {
 				// connection = channel.getConnection();
 				channel.close();
@@ -254,8 +252,12 @@ public class Main {
 			} catch (Exception e) {
 				logger.error("Could not close the channel " + e.getMessage()
 						+ " " + e);
-				e.printStackTrace();
+
 			}
+		channels.remove(channel);
+		if (channels.size() == 0)
+			System.exit(0);
+
 		// if (connection != null)
 		// try {
 		// connection.close();

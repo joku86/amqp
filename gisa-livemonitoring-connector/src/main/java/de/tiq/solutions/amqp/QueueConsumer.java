@@ -20,13 +20,14 @@ import com.rabbitmq.client.ShutdownSignalException;
 import de.tiq.solutions.gisaconnect.amqp.FallbackOnError;
 import de.tiq.solutions.gisaconnect.amqp.QueueType;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel;
+import de.tiq.solutions.gisaconnect.receipt.GisaEvermindDATAModel.Val;
 import de.tiq.solutions.gisaconnect.receipt.GisaEvermindLOGModel;
 import de.tiq.solutions.gisaconnect.websocket.Sender;
 import de.tiq.solutions.gisaconnect.websocket.Sender.WebsocketSender;
-import de.tiq.solutions.transformation.Context;
-import de.tiq.solutions.transformation.TransformationException;
-import de.tiq.solutions.transformation.transformator.AmqpDataJsonToRowkey;
-import de.tiq.solutions.transformation.transformator.AmqpEventJsonToRowkey;
+import de.tiq.solutions.transformation.ws.Context;
+import de.tiq.solutions.transformation.ws.TransformationException;
+import de.tiq.solutions.transformation.ws.transformator.AmqpDataJsonToRowkey;
+import de.tiq.solutions.transformation.ws.transformator.AmqpEventJsonToRowkey;
 import de.tiq.solutions.gisaconnect.websocket.WebSocketFactory;
 
 public class QueueConsumer implements Consumer {
@@ -64,6 +65,7 @@ public class QueueConsumer implements Consumer {
 			message = new String(body, "UTF-8");
 			switch (type) {
 			case DATA:
+
 				GisaEvermindDATAModel readValue = mapJsonToObject(message);
 				int sendedToServer = 0;
 				try {
@@ -73,11 +75,12 @@ public class QueueConsumer implements Consumer {
 							+ e.getLocalizedMessage() + "  " + e);
 
 					if (!waitOnWebsocketServer(sendedToServer, readValue)) {
-						logger.error("------------------ During 3 hours the LM-Server for DATA could not be arrived. Process transmitter shut down --------------------");
+						logger.error(
+								"------------------ During 3 hours the LM-Server for DATA could not be arrived. Process transmitter shut down --------------------");
 						fallbackOnError.notifyShutdown(channel, "LM-Server not availible");
 					}
 				} catch (TransformationException e) {
-					logger.error("Error by transformation " + e + "  " + message);
+					logger.error("Error on transformation " + e + "  " + message);
 					fallbackOnError.notifyShutdown(channel, "Could not transformate the Data ");
 				}
 				break;
@@ -90,12 +93,13 @@ public class QueueConsumer implements Consumer {
 							+ e.getLocalizedMessage() + "  " + e);
 
 					if (!waitOnWebsocketServer(readedValue)) {
-						logger.error("------------------ During 3 hours the LM-Server could not be arrived. Log transmitter shut down --------------------");
+						logger.error(
+								"------------------ During 3 hours the LM-Server could not be arrived. Log transmitter shut down --------------------");
 						fallbackOnError.notifyShutdown(channel, "LM-Server not availible");
 					}
 				} catch (TransformationException e) {
-					logger.error("Error by transformation " + e + "  " + message);
-					fallbackOnError.notifyShutdown(channel, "Could not transformate the Event ");
+					logger.error("Error on transformation " + e + "  " + message);
+					fallbackOnError.notifyShutdown(channel, "Not Understandable message: " + message);
 				}
 				break;
 
@@ -105,9 +109,9 @@ public class QueueConsumer implements Consumer {
 
 			confirm(envelope);
 		} catch (IOException e) {
-			logger.error("Message not understandable  " + e.getLocalizedMessage() + "  " + e);
+			logger.error("Message  not understandable  " + e.getLocalizedMessage() + "  " + e);
+			fallbackOnError.notifyShutdown(channel, "EXIT");
 		}
-
 	}
 
 	private void checkSended(int sendedToServer, GisaEvermindDATAModel readValue)
@@ -176,11 +180,15 @@ public class QueueConsumer implements Consumer {
 			throws IOException, IllegalStateException, TransformationException {
 		int sent = offset;
 		for (int i = offset; i < readValue.getVal().size(); i++) {
-			String apply = context.executeStrategy(readValue.getVal().get(i), readValue
+			Val input = readValue.getVal().get(i);
+			String apply = context.executeStrategy(input, readValue
 					.getTs().getTime());
 			if (apply != null) {
-				logger.info("versende data: " + apply);
 				websocketSender.send(apply);
+				if (logger.isDebugEnabled())
+					logger.debug("sended DATA: " + apply);
+			} else {
+				logger.error("Transformation not defined for DATA: " + input);
 			}
 			sent++;
 		}
@@ -193,7 +201,10 @@ public class QueueConsumer implements Consumer {
 		String apply = context.executeStrategy(readValue, readValue.getTs().getTime());
 		if (apply != null) {
 			websocketSender.send(apply);
-			logger.info("versendet LOG: " + apply);
+			if (logger.isDebugEnabled())
+				logger.debug("sended LOG: " + apply);
+		} else {
+			logger.error("Transformation not defined for LOG: " + readValue);
 		}
 	}
 

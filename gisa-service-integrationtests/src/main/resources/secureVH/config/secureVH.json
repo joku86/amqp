@@ -1,0 +1,91 @@
+{
+  "id" : "72de34c2-5042-408d-9637-466fde2e2f75",
+  "type" : "Memory",
+  "context" : { },
+  "name" : "secureVH",
+  "modelVersion" : "6.0",
+  "lastUpdatedBy" : "admin",
+  "createdBy" : "admin",
+  "lastUpdatedTime" : 1457972606827,
+  "createdTime" : 1457972606827,
+  "exchanges" : [ {
+    "id" : "2e8c7b4c-5ca6-4d7e-b6b7-26614e54c2c7",
+    "name" : "amq.direct",
+    "type" : "direct",
+    "lastUpdatedBy" : "admin",
+    "createdBy" : "admin",
+    "lastUpdatedTime" : 1457972606827,
+    "createdTime" : 1457972606827
+  }, {
+    "id" : "cd4a7390-9c59-4b21-9c50-19b33aff74e6",
+    "name" : "amq.fanout",
+    "type" : "fanout",
+    "lastUpdatedBy" : "admin",
+    "createdBy" : "admin",
+    "lastUpdatedTime" : 1457972606827,
+    "createdTime" : 1457972606827
+  }, {
+    "id" : "01195f5a-348a-4909-954e-fb990fb23664",
+    "name" : "amq.match",
+    "type" : "headers",
+    "lastUpdatedBy" : "admin",
+    "createdBy" : "admin",
+    "lastUpdatedTime" : 1457972606827,
+    "createdTime" : 1457972606827
+  }, {
+    "id" : "2b89945d-5d3a-4648-9039-026829473696",
+    "name" : "amq.topic",
+    "type" : "topic",
+    "lastUpdatedBy" : "admin",
+    "createdBy" : "admin",
+    "lastUpdatedTime" : 1457972606827,
+    "createdTime" : 1457972606827
+  } ],
+  "queues" : [ {
+    "id" : "d9281c4a-b3e0-4daa-89f1-41300cc68ac1",
+    "name" : "dataQueue",
+    "type" : "standard",
+    "durable" : true,
+    "messageDurability" : "NEVER",
+    "messageGroupSharedGroups" : false,
+    "owner" : null,
+    "lastUpdatedBy" : "admin",
+    "lastUpdatedTime" : 1458040136455,
+    "createdBy" : "admin",
+    "createdTime" : 1458040136455,
+    "bindings" : [ {
+      "exchange" : "2e8c7b4c-5ca6-4d7e-b6b7-26614e54c2c7",
+      "id" : "4dc2f7f3-7d62-4a0a-bce7-d0a9ecaf7bce",
+      "name" : "tiqsolar.An1Dat",
+      "type" : "Binding",
+      "durable" : true,
+      "lastUpdatedBy" : "admin",
+      "lastUpdatedTime" : 1458040158470,
+      "createdBy" : "admin",
+      "createdTime" : 1458040158470
+    } ]
+  }, {
+    "id" : "87ae7611-0d45-49c0-877a-126c7e0e8024",
+    "name" : "logQueue",
+    "type" : "standard",
+    "durable" : true,
+    "messageDurability" : "NEVER",
+    "messageGroupSharedGroups" : false,
+    "owner" : null,
+    "lastUpdatedBy" : "admin",
+    "lastUpdatedTime" : 1458040068447,
+    "createdBy" : "admin",
+    "createdTime" : 1458040068447,
+    "bindings" : [ {
+      "exchange" : "2e8c7b4c-5ca6-4d7e-b6b7-26614e54c2c7",
+      "id" : "135f5e79-4f71-4d4b-8920-417155a8e42c",
+      "name" : "tiqsolar.An1Log",
+      "type" : "Binding",
+      "durable" : true,
+      "lastUpdatedBy" : "admin",
+      "lastUpdatedTime" : 1458040098885,
+      "createdBy" : "admin",
+      "createdTime" : 1458040098885
+    } ]
+  } ]
+}

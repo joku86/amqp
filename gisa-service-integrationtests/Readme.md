@@ -4,8 +4,10 @@ GISA-Service-Integrationstests
 Modul mit den Integrationgstests für die Servicemodule
 
 ###AMQP-Broker:Qpid
-In dem Ordner qpid-broker/6.0.0/bin liegen die Scripte und der Konfigurationsordner von einer Queue mit einem Exchange  
-Zum Starten des Brokers kann das Script "startscript.sh" ausgeführt werden.  
+Für den Broker werden die in der Pom eingefügte Dependencies benötigt.  
+Wenn kein LM-Server läuft wird der Test 3 Stunden laufen ohne eine Nachricht zugestellt zu haben da der Connector in den Wartemodus wechselt.
+
+
  
 #Verbindungsdaten zum Exchange:	
 * Host=localhost
@@ -15,7 +17,9 @@ Zum Starten des Brokers kann das Script "startscript.sh" ausgeführt werden.
 * Benutzername=admin
 * Passwort=admin 
 * exchange=amq.direct 
-* routingKey=forTestQueue
+* routingKeyData=tiqsolar.An1Dat
+* routingKeyLog=tiqsolar.An1Log
+ 
 
 #Verbindungsdaten zu der Queue:	
 * Host=localhost
@@ -24,7 +28,8 @@ Zum Starten des Brokers kann das Script "startscript.sh" ausgeführt werden.
 * VirtualHost=secureVH
 * Benutzername=admin
 * Passwort=admin 
-* Queue=testQueue
+* Daten-Queue=dataQueue
+* Log-Queue=logQueue
 	
 
 Nützliche Links:

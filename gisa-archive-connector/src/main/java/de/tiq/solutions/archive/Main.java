@@ -199,8 +199,7 @@ public class Main {
 			logFile = (String) cmd.getParsedOptionValue(OPTIONS.LOGFILE
 					.getDesc());
 			createNewAppender(logFile);
-		}
-		else {
+		} else {
 			RollingFileAppender appender = (RollingFileAppender) Logger.getRootLogger().getAppender("R");
 			logger.info("Use default Logfile location: " + appender.getFile());
 
