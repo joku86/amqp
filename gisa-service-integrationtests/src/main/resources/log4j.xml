@@ -8,7 +8,7 @@
     </layout> 
   </appender> 
   <appender name="R" class="org.apache.log4j.RollingFileAppender"> 
-    <param name="file" value="/var/log/it.log"/>
+    <param name="file" value="/tmp/log/it.log"/>
     <param name="MaxFileSize" value="50MB"/>
     <!-- Keep one backup file -->
     <param name="MaxBackupIndex" value="1"/>
@@ -18,7 +18,7 @@
   </appender> 
   <root> 
     <priority value ="info" /> 
-<!--     <appender-ref ref="stdout" />  -->
+    <appender-ref ref="stdout" /> 
     <appender-ref ref="R" /> 
   </root>
 </log4j:configuration>

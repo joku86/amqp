@@ -4,8 +4,11 @@ GISA-Service-Integrationstests
 Modul mit den Integrationgstests für die Servicemodule
 
 ###AMQP-Broker:Qpid
-Für den Broker werden die in der Pom eingefügte Dependencies benötigt.  
-Wenn kein LM-Server läuft wird der Test 3 Stunden laufen ohne eine Nachricht zugestellt zu haben da der Connector in den Wartemodus wechselt.
+Für den Broker werden die Qpid Dependencies benötigt.  
+Es wird ein LM-Server benötigt. 
+Die von Evermind erhaltene Anwendung muss etwas abgeändert werden oder den Branch  feature/setup\_for\_integrations_tests benutzen.
+Der Archive Connector lässt sich nicht aus dem Test Starten dieser muss für die Tests manuell ausgeführt werden.
+ 
 
 
  

@@ -12,7 +12,6 @@
 		<qpid.version>6.0.1</qpid.version>
 	</properties>
 	<dependencies>
-
 		<!-- test -->
 		<dependency>
 			<groupId>org.apache.qpid</groupId>
@@ -30,56 +29,56 @@
 			<groupId>org.apache.qpid</groupId>
 			<artifactId>qpid-management-common</artifactId>
 			<version>${qpid.version}</version>
-				<scope>test</scope>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.qpid</groupId>
 			<artifactId>qpid-broker-core</artifactId>
 			<version>${qpid.version}</version>
-				<scope>test</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.qpid</groupId>
 			<artifactId>qpid-broker-plugins-amqp-0-10-protocol</artifactId>
 			<version>${qpid.version}</version>
-				<scope>test</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.qpid</groupId>
 			<artifactId>qpid-broker-plugins-access-control</artifactId>
 			<version>${qpid.version}</version>
-				<scope>test</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.qpid</groupId>
 			<artifactId>qpid-broker-plugins-management-http</artifactId>
 			<version>${qpid.version}</version>
-				<scope>test</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.qpid</groupId>
 			<artifactId>qpid-broker-plugins-management-jmx</artifactId>
 			<version>${qpid.version}</version>
-				<scope>test</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.qpid</groupId>
 			<artifactId>qpid-broker-plugins-memory-store</artifactId>
 			<version>${qpid.version}</version>
-				<scope>test</scope>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.qpid</groupId>
 			<artifactId>qpid-broker-plugins-access-control</artifactId>
 			<version>${qpid.version}</version>
-				<scope>test</scope>
+			<scope>test</scope>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.apache.qpid</groupId> -->
-<!-- 			<artifactId>qpid-client</artifactId> -->
-<!-- 			<version>6.0.0</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.qpid</groupId> -->
+		<!-- <artifactId>qpid-client</artifactId> -->
+		<!-- <version>6.0.0</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
 			<artifactId>geronimo-jms_1.1_spec</artifactId>

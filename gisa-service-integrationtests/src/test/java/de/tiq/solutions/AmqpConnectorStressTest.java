@@ -35,9 +35,10 @@ import gisa.TiqData;
 /**
  * 
  * @author johann.kunz Before execute this class configure frame conditions like
- *         LM-Server. The Main-Class of Archive Connector can started but serve
- *         an Exception (Caused by: java.lang.IllegalAccessError: tried to
- *         access method com.google.common.base.Stopwatch.<init>()V from class
+ *         LM-Server and DataCreator from Evermind. The Main-Class of Archive
+ *         Connector can started but serve an Exception (Caused by:
+ *         java.lang.IllegalAccessError: tried to access method
+ *         com.google.common.base.Stopwatch.<init>()V from class
  *         org.apache.hadoop.hbase.zookeeper.MetaTableLocator)
  */
 public class AmqpConnectorStressTest {
@@ -82,7 +83,6 @@ public class AmqpConnectorStressTest {
 
 		Thread t = new Thread(new Runnable() {
 
-			@Override
 			public void run() {
 				logger.info("Start Connector");
 				// Das Funktioniert nicht:
@@ -190,16 +190,14 @@ public class AmqpConnectorStressTest {
 	private void fillData(Channel channel, String exchangeName) throws Exception
 
 	{
-
 		String routingKeyData = "tiqsolar.An1Dat";
 		String routingKeyLogs = "tiqsolar.An1Log";
 		data = new TiqData();
-
-		generate(channel, exchangeName, routingKeyData);
+		generate(channel, exchangeName, routingKeyData, routingKeyLogs);
 
 	}
 
-	private void generate(Channel channel, String exchangeName, String routingKeyData) throws Exception, IOException {
+	private void generate(Channel channel, String exchangeName, String routingKeyData, String routingKeyLogs) throws Exception, IOException {
 		LocalDateTime nextLog = new LocalDateTime();
 		nextLog = nextLog.minusHours(1);
 		LocalDateTime nextSignal = new LocalDateTime();
@@ -217,7 +215,7 @@ public class AmqpConnectorStressTest {
 				payload = TiqData.toJson(log);
 				if (payload != null)
 					channel.basicPublish(exchangeName,
-							"tiqsolar.An1Log", null, payload.getBytes());
+							routingKeyLogs, null, payload.getBytes());
 			}
 			nextLog = nextLog.plusSeconds(1);
 		}
